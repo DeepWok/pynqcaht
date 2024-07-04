@@ -21,7 +21,7 @@ Operating system requirements: Windows 10 or 11, Ubuntu Linux
 
 Go to the following 
 
-For limited storage issues, refer to [debug.md](../debug.md).
+For limited storage issues, refer to [debug.md](../debug.md/#limited-storage-space).
 
 ### PuTTY (optional)
 
@@ -56,7 +56,7 @@ Now we have to assign a static IP address to the laptop's ethernet port. Open up
 
 Now, open up your web browser and type in the following address: `192.168.2.99:9090`, which is PYNQ's default IP address. 
 
-> Is your PYNQ board refusing to connect? Refer to the troubleshooting section in [debug.md](../debug.md). Troubleshooting might require the use of PuTTY.
+> Is your PYNQ board refusing to connect? Refer to the troubleshooting section in [debug.md](../debug.md/#refusing-to-connect). Troubleshooting might require the use of PuTTY.
 
 ## 1.2 FIR filter
 
@@ -66,17 +66,39 @@ Now we are ready to get started. Open up Vivado and create a new project.
 
 ### Creating a new project
 
+Open up Vivado and create a new project. 
 
-### Adding a block design
-
-
-### Configuring the FIR filter IP
+//! Picture for starting page
 
 
-### Block connections
+//! Picture for project naming
 
 
-### 
+//! Board part
+
+> Board part troubleshooting: If you are unable to find the PYNQ-Z1 board part (xc7z020-1clg400c), refer to the troubleshooting section in [debug.md](../debug.md/#board-parts-not-found).
+
+### Creating the block design
+
+On the column on the left hand side, click `Create Block Design`. You can leave the block design name as `design_1` for now.
+
+//! Picture for block design
+
+//! Picture for adding IP
+
+//! Picture for adding ZYNQ7 Processing System (HP slave port)
+
+//! Picture for adding DMA
+
+//! Picture for adding FIR_filter
+
+//! Picture for running block automation
+
+### Exporting the hardware
+
+
+### Loading the overlay on Jupyter Notebook
+
 
 
 ## 1.3 Extension: Creating an overlay with a Verilog module 
