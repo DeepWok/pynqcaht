@@ -31,9 +31,9 @@ https://docs.amd.com/v/u/en-US/pg140-cic-compiler
 ## 2.3 Audio Processing (Hardware)
 
 
-## 2.4 Challenges: Improving on the current design
+## 2.4 Extensions: Improving on the current design
 
-The challenge part here is open-ended - I don't want to restrict those who want to explore different parts of this lab.
+The extension part here is open-ended - I don't want to restrict those who want to explore different parts of this lab.
 
 Some recommended extensions include:
 1. Write your own decimation filter: In these labs, we took advantage of the CIC compiler IP created by Xilinx. Why not write one yourself? Start by understanding decimation and the CIC structure - you can refer to the sources in sections 2.2 and 2.3.
