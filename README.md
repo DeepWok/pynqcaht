@@ -73,3 +73,5 @@ In this lab, you will combine the processing powers of PYNQ, Whisper and AWS, to
 
 Coursework will be...
 
+It should be noted that while you have been taught to use PYNQ's Jupyter Notebook infrastructure to communicate and send commands to the programmable logic, it is always possible to build application / memory controllers in BareMetal / PetaLinux. You may choose to do so for your project is you find it suitable.
+
