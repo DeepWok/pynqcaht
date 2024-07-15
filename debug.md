@@ -33,12 +33,14 @@ If your PYNQ board refuses to connect, try the following:
 3. SSH into the board using PuTTY. Run `ifconfig` to check that its `eth0:1` IP address is what you expected (usually `192.168.2.99`). If it is not, try running your the indicated IP address with port 9090.
 4. If you are still unable to connect, try restarting your PYNQ board, which usually does the trick. Serial into the board using PuTTY and run `sudo reboot`. If you are unsure as to how to set up PuTTY, refer to the [PuTTY section](#setting-up-putty) of this file.
 
+> If you are unable to even serial into the board, then you might have flashed the wrong image - make sure you are flashing the SD card with the PYNQ Z1 image, not the Z2 image.
+
 ### Limited storage space
 Vivado and Vitis are huge programs, and they require a lot of space to install. You can usually see the expected space required in the installation setup tool. Note that the space required for extraction and download is larger than the final installation size.
 
 If you don't have enough space, the best method is to reduce the amount of board support selections. Since you are only expected to use the PYNQ-Z1 board, which is a Zynq-7000 series board, you can deselect support for all other boards types to reduce the installation size.
 
-### Board parts not found
+### Board parts not found (in Vivado during project creation)
 
 ## 4. References
 
@@ -46,6 +48,7 @@ If you don't have enough space, the best method is to reduce the amount of board
 For any issues with PYNQ, you can consult the following resources:
 - [PYNQ Documentation](https://pynq.readthedocs.io/en/latest/)
 - [PYNQ forum](https://discuss.pynq.io/)
+- [PYNQ YouTube tutorials](https://youtube.com/playlist?list=PLjVZA8Z_co6KBmqzyHfzKnJ8LmYd7cU03&si=lTCQ5iMN9KToyjBG)
 
 ### Setting up PuTTY
 

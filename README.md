@@ -24,7 +24,7 @@ There will be 4 lab weeks (2 hours of lab per week). The labs are designed to be
 
 The goal of these labs is to create an interactive bot which uses the power of Whisper to understand your speech and communicate with you.
 
-Whisper is a...
+Whisper is a... // not completed
 
 A general idea of the steps you will take:
 1. Setup the PYNQ board and go through a simple FIR filter tutorial to understand the PYNQ-Vivado ecosystem.
@@ -68,6 +68,12 @@ In this lab, you will explore the audio processing capabilities of the PYNQ boar
 [Lab 4 - Building the chatbot](lab4/lab4.md)
 
 In this lab, you will combine the processing powers of PYNQ, Whisper and AWS, to create a chatbot that can understand your speech and communicate with you. You will also connect the chatbot to AWS services by utilising AWS's provided databases, such as DynamoDB. Lastly, you will design and 3D print your chatbot by CAD scripting.
+
+### Lab Extensions (optional)
+
+[Lab Extensions](lab-extensions/lab-extensions.md)
+
+Optional extensions for the labs, where you can explore different parts of the lab and improve on the current design. Note that these extensions are open-ended and are not restricted to the suggestions provided. While "optional", bonus marks will be awarded to your lab oral grades if you are able to complete the labs and demonstrate a nice challenging extension.
 
 ### Coursework
 

@@ -124,9 +124,7 @@ On the column on the left hand side, click `Create Block Design`. You can leave 
 
 
 
-## 1.3 Extension: Creating an overlay with a Verilog module 
-
-This is an optional section which demonstrates how you can package your IPs written in Verilog and use them in your PYNQ overlay. It is recommended that you complete this section if you are not familiar with the Vivado toolchain in general.
+<!-- This is an optional section which demonstrates how you can package your IPs written in Verilog and use them in your PYNQ overlay. It is recommended that you complete this section if you are not familiar with the Vivado toolchain in general.
 
 https://discuss.pynq.io/t/tutorial-creating-a-new-verilog-module-overlay/1530
 
@@ -142,7 +140,7 @@ https://discuss.pynq.io/t/tutorial-creating-a-new-verilog-module-overlay/1530
 ### Exporting the hardware
 
 
-### MMIO interface in Jupyter Notebook
+### MMIO interface in Jupyter Notebook -->
 
 
 

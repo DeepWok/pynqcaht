@@ -11,9 +11,9 @@ In this section, we will learn how to utilise the BaseOverlay and implement some
 In order to make a Whisper API call, we need to send the audio in a format that is accepted by Whisper. Unfortunately, the PYNQ-Z1 board's onboard microphone is a MEMS (Micro-Electro-Mechanical Systems) microphone, which usually records in PDM (pulse density modulation) format.
 
 A brief overview of the format types:
-- PDM (pulse density modulation): MEMS microphones use PDM because it offers a straightforward, noise-immune digital output that is compact and cost-effective.
-- PCM (pulse code modulation): PCM is the standard for digital audio because it aligns well with digital processing, maintains audio quality, and serves as the basis for compression formats.
-- PWM (pulse width modulation): PWM is used for audio playback because it efficiently drives output devices, simplifies DAC implementation, and is power-efficient.
+- PDM (pulse density modulation) -> Record: MEMS microphones use PDM because it offers a straightforward, noise-immune digital output that is compact and cost-effective.
+- PCM (pulse code modulation) -> Storage: PCM is the standard for digital audio because it aligns well with digital processing, maintains audio quality, and serves as the basis for compression formats.
+- PWM (pulse width modulation) -> Playback : PWM is used for audio playback because it efficiently drives output devices, simplifies DAC implementation, and is power-efficient.
 
 Please go ahead and explore the characteristics and details of these different formats, where you should find familiar information related to your Signals and Systems / Communications modules. 
 
@@ -31,11 +31,4 @@ https://docs.amd.com/v/u/en-US/pg140-cic-compiler
 ## 2.3 Audio Processing (Hardware)
 
 
-## 2.4 Extensions: Improving on the current design
-
-The extension part here is open-ended - I don't want to restrict those who want to explore different parts of this lab.
-
-Some recommended extensions include:
-1. Write your own decimation filter: In these labs, we took advantage of the CIC compiler IP created by Xilinx. Why not write one yourself? Start by understanding decimation and the CIC structure - you can refer to the sources in sections 2.2 and 2.3.
-2. Using the video module: The board is not limited to audio processing - with the power of PYNQ, you could process videos as well! Now you know how to interface with the BaseOverlay, you can mess around with the video modules and hook up your PYNQ board to a monitor using HDMI. 
 
