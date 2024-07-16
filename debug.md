@@ -18,8 +18,6 @@ https://support.xilinx.com/s/article/76960?language=en_US
 Related forum (explanation):
 https://discuss.pynq.io/t/problem-rebuilding-base-v2-6/4042
 
-### 
-
 ## 3. Troubleshooting
 
 For any issues with PYNQ, you can consult the following resources:
@@ -41,6 +39,17 @@ Vivado and Vitis are huge programs, and they require a lot of space to install. 
 If you don't have enough space, the best method is to reduce the amount of board support selections. Since you are only expected to use the PYNQ-Z1 board, which is a Zynq-7000 series board, you can deselect support for all other boards types to reduce the installation size.
 
 ### Board parts not found (in Vivado during project creation)
+...
+
+### WiFi connection not active
+The best indication is always to try and `ping -c 4 8.8.8.8` to see if you have an active internet connection. If you are unable to ping, then your WiFi connection is not active. Note that packet losses may occur if the dongle is too far from the router.
+
+Steps to take:
+1. Unplug and replug the WiFi dongle to the board. Do a `sudo reboot` to restart the board.
+2. Use `ipconfig` and `ipaddr` to check your network settings. Your Wifi should be `wlan0` and have an IPv4 address assigned to it.
+3. You Wifi connection might not be active. Run `nmcli radio wifi` to check if your WiFi is enabled. If it is not, run `nmcli radio wifi on` to enable it.
+4. Run `nmcli device wifi list` to see the available networks. If your network is not listed, run `nmcli device wifi connect <SSID> password <password>` to connect to your network.
+5. Run `nmcli connection show --active` to see the active connections.
 
 ## 4. References
 
