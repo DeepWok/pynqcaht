@@ -2,6 +2,8 @@
 
 ## 4.1 Setting up board connection
 
+https://github.com/Xilinx/PYNQ/blob/master/pynq/notebooks/common/wifi.ipynb
+
 ## 4.2 Using Whisper
 
 https://pynq.readthedocs.io/en/v3.0.0/getting_started/network_connection.html#:~:text=With%20a%20direct%20connection%2C%20you,new%20packages%20without%20Internet%20access.
