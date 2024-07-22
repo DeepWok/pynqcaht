@@ -30,7 +30,7 @@ https://docs.amd.com/v/u/en-US/pg140-cic-compiler
 
 ## 2.3 Audio Processing (Hardware)
 
-Brace yourselves, this will be the longest section of the labs, where you will get to understand how exactly the PYNQ acts as a "embedded Python wrapper" which allows you to interact with your block design's components. Here we will take more of a embedded development approach and modify both the BaseOverlay and also learn to write your own Python drivers to interact with those components.
+Brace yourselves, this will be the longest section of the labs, where you will get to understand how exactly the PYNQ acts as a "embedded Python wrapper" which allows you to interact with your block design's components. Here we will take more of a embedded systems approach and modify both the BaseOverlay and also learn to write your own drivers to interact with those components. The end goal is to create a hardware-based solution to accelerate the pdm-to-pcm conversion.
 
 Let's start by understanding the audio module in the BaseOverlay. Click open <expand the IP>.
 
@@ -51,6 +51,16 @@ So how does the Python audio driver use the C++ functions? Notice the use of `cf
 ```python
 self._libaudio = self._ffi.dlopen(LIB_SEARCH_PATH + "/libaudio.so")
 ```
+
+which is compiled from the C++ audio drivers using CMake. Usually, embedded developers simply interface with the hardware by directly writing C drivers - PYNQ was created to lower the boundary of FPGA development by pre-writing most drivers and wrapping them in C++. (However, the creator of this lab has suffered as a result and vows to never use PYNQ again - baremetal is superior)
+
+Now let's do the hardware programming!
+
+### Step 1: Creating the block design
+
+
+
+
 
 
 
