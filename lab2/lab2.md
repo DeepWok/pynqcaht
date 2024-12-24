@@ -52,17 +52,13 @@ So how does the Python audio driver use the C++ functions? Notice the use of `cf
 self._libaudio = self._ffi.dlopen(LIB_SEARCH_PATH + "/libaudio.so")
 ```
 
-which is compiled from the C++ audio drivers using CMake. Usually, embedded developers simply interface with the hardware by directly writing C drivers - PYNQ was created to lower the boundary of FPGA development by pre-writing most drivers and wrapping them in C++. (However, the creator of this lab has suffered as a result and vows to never use PYNQ again - baremetal is superior)
+which is compiled from the C++ audio drivers using CMake. Usually, embedded developers simply interface with the hardware by directly writing C drivers - PYNQ was created to lower the boundary of FPGA development by pre-writing most drivers and wrapping them in C++.
 
 Now let's do the hardware programming!
 
 ### Step 1: Creating the block design
 
 
-
-
-
-
-
+### Step 2: 
 
 
