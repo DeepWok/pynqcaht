@@ -16,5 +16,14 @@ overlay.ip_dict
 
 # Verify correct driver associated with your IP
 print(type(overlay.<your_ip>))
-
 ```
+
+### Terminology
+- PDM: Pulse-density modulation
+- PCM: Pulse-code modulation
+- WAV: Waveform Audio File Format
+- ASR: Automatic speech recognition
+- TTS: Text-to-speech
+- CSV: Comma-separated values
+- API: Application programming interface
+

@@ -4,6 +4,8 @@
 
 In this section, we will do a brief exploration of the BaseOverlay and understand its usecase in the upcoming parts of the lab.
 
+The BaseOverlay is created by 
+
 ## 2.2 Audio Processing (Software)
 
 In this section, we will learn how to utilise the BaseOverlay and implement some basic audio processing in software.
@@ -19,10 +21,9 @@ Please go ahead and explore the characteristics and details of these different f
 
 The BaseOverlay provides you with PDM to PWM conversions to allow for playback from the audio buffer, as demonstrated in section 2.1. But to utilise Whisper, we need to convert the recorded PDM files into PCM, which can then be wrapped as a common audio file format such as `.wav` or `.mp3`, before making an API call. 
 
-Let's start by...
+Let's start by implementing a software PDM-PCM conversion function in Python.
 
-
-Here, we implement a software PDM-PCM conversion in Python...
+>Task 1: 
 
 https://tomverbeure.github.io/2020/09/30/Moving-Average-and-CIC-Filters.html
 https://www.youtube.com/watch?v=8RbUSaZ9RGY
@@ -30,7 +31,7 @@ https://docs.amd.com/v/u/en-US/pg140-cic-compiler
 
 ## 2.3 Audio Processing (Hardware)
 
-Brace yourselves, this will be the longest section of the labs, where you will get to understand how exactly the PYNQ acts as a "embedded Python wrapper" which allows you to interact with your block design's components. Here we will take more of a embedded systems approach and modify both the BaseOverlay and also learn to write your own drivers to interact with those components. The end goal is to create a hardware-based solution to accelerate the pdm-to-pcm conversion.
+In this section you will get to understand how exactly the PYNQ acts as a "embedded Python wrapper" which allows you to interact with your block design's components. Here we will take more of a embedded systems approach and modify both the BaseOverlay and also learn how drivers interact with those components. The end goal is to create a hardware-based solution to accelerate the PDM-to-PCM conversion.
 
 Let's start by understanding the audio module in the BaseOverlay. Click open <expand the IP>.
 
@@ -40,9 +41,9 @@ Under the `audio_direct` IP, we see two different hierarchies - one named the `d
 
 But remember that in section 2.1, you were also able to record to an audio buffer and save the audio data from the buffer? How exactly is the buffer built? 
 
-That's where the `d_axi_pdm_v1_2_S_AXI` module comes in. The `vhdl` might seem confusing, but essentially it just instantiates a FIFO that can be controlled through certain register offsets in the drivers. Let's examine this more carefully:
+That's where the `d_axi_pdm_v1_2_S_AXI` module comes in. The `vhdl` might seem confusing, but essentially it just instantiates a FIFO that can be controlled through certain register offsets in the drivers. This can be done by instantiating an `AXI4 Peripheral`. Let's examine this more carefully:
 
-Inside the ... file, we see <show the code that gives the regsiter offsets>
+Inside the ... file, we see [show the code that gives the regsiter offsets]
 
 To use these control registers, PYNQ has written [C++ audio driver](https://github.com/Xilinx/PYNQ/blob/master/pynq/lib/_pynq/_audio/audio_direct.cpp#L59) which writes values to these register offsets to control the behaviour of the FIFO (which is basically what you would do in embedded development). You can match the register offsets in the `vhdl` file with the audio controller registers in the [header file of the C++ audio driver](https://github.com/Xilinx/PYNQ/blob/master/pynq/lib/_pynq/_audio/audio_direct.h). 
 
@@ -56,9 +57,15 @@ which is compiled from the C++ audio drivers using CMake. Usually, embedded deve
 
 Now let's do the hardware programming!
 
-### Step 1: Creating the block design
+### Task 2: Creating an audio frontend (PDM-to-PCM converter)
+
+[Add a diagram showing we will add an audio frontend in front of the audio ip]
+
+### Task 3: Modifying
+
+### Task 4:
 
 
-### Step 2: 
+
 
 
