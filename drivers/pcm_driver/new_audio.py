@@ -83,8 +83,9 @@ class AudioDirect(DefaultIP):
         if not 0 < seconds <= 60:
             raise ValueError("Recording time has to be in (0,60].")
 
-        # Here we use 37.5kHz to match the PCM sampling rate given the decimation settings
-        num_samples_32b = math.ceil(seconds * 37500)
+        # Here we should use 37.5kHz to match the PCM sampling rate given the decimation settings
+        # But that doesn't work - why so? :)
+        num_samples_32b = math.ceil(seconds * 19530)
         
         # Create data buffer
         self.buffer = numpy.zeros(num_samples_32b, dtype=numpy.int32)
