@@ -92,33 +92,56 @@ Now we are ready to get started. Open up Vivado and create a new project.
 
 ### Creating a new project
 
-Open up Vivado and create a new project.
+1. Open up Vivado and create a new project. 
+2. Press Next after reading the wizard.
+3. Enter a suitable name and location for the project. Ensure check subdirectory is enabled so that your project files are contained in a parent folder.
+4. Press Next.
+5. Select RTL Project, for now: "do not specify the sources".
+6. Press Next.
+7. Select the PYNQ-Z1 board (you may need to install board files in Vivado, see below.) Double click on the part number to select it and move onto the summary.
+8. Press Finish.
 
-//! Picture for starting page
+![Vivado Start Page](/images/starting_page.png)
 
 
-//! Picture for project naming
+![Vivado New Project Page](/images/new_project_page.png)
 
 
-//! Board part
+![Vivado Part Select Page](/images/part_select.png)
+
+![Vivado New Project Wizard Summary](/images/new_project_summary.png)
 
 > Board part troubleshooting: If you are unable to find the PYNQ-Z1 board part (xc7z020-1clg400c), refer to the troubleshooting section in [debug.md](../debug.md/#board-parts-not-found).
 
 ### Creating the block design
 
-On the column on the left hand side, click `Create Block Design`. You can leave the block design name as `design_1` for now.
+1. On the column on the left hand side, click `Create Block Design`. You can leave the block design name as `design_1` for now.
 
-//! Picture for block design
+![Create Block Design](/images/create_block_design.png)
 
-//! Picture for adding IP
+2. Add the Zynq7 processing system this contains the interfaces to the dual ARM cores on the FPGA. Inside the zynq7 PS IP settings theres a part which notes how many HP slave ports are needed (just one in this case, HP0)
+![Add Zynq Processing System IP](/images/add_ip.png)
 
 //! Picture for adding ZYNQ7 Processing System (HP slave port)
 
-//! Picture for adding DMA
+3. Add the Direct Memory Access (DMA). <TODO: add explanation>
+![Add AXI Direct Memory Access (DMA)](/images/dma.png)
 
-//! Picture for adding FIR_filter
+4. Add the FIR filter: Vivado provides a wizard called the FIR Compiler which helps you to design your own filter. See <TODO: for more details>
+![Add FIR Compiler Block](/images/fir_compiler.png)
 
-//! Picture for running block automation
+5. Run Block Automation <TODO: What does this do?>
+
+![Block Automation](/images/block_automation.png)
+
+6. Run Connection Automation, Vivado intelligently maps input ports and output ports together.
+
+![Connection Automation](/images/connection_automation.png)
+
+You should have a design that looks something like this:
+
+![Final Block Design](/images/final_block_design.png)
+
 
 ### Exporting the hardware
 
