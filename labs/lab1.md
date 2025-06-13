@@ -125,12 +125,9 @@ On the column on the left hand side, click `Create Block Design`. You can leave 
 
 ### Loading the overlay on Jupyter Notebook
 
-## 1.3 Simple register control
+## 1.3 Simple register control (merge array)
 
-Here we
+Here we attempt a simple array merging procedure
 
-
-
-
-
+Don't worry, the drivers have already been prewritten for you under the `drivers` folder. But before we make a simple copy and paste change, we should look at what is being done under the hood which allows you to simply make this change.
 

@@ -32,6 +32,8 @@ Let's start by implementing a software PDM-PCM conversion function in Python.
 
 ### Task 2A: Software PDM-PCM conversion function
 
+Need something here lol
+
 https://github.com/Xilinx/PYNQ/blob/master/boards/Pynq-Z1/base/notebooks/audio/audio_playback.ipynb
 
 ## 2.3 Audio Processing (Hardware)
@@ -79,18 +81,35 @@ Useful references:
 
 [Add a diagram showing we will add an audio frontend in front of the audio ip]
 
-### Task 2C: Modifying the drivers
+... instructions here on how to add the CIC compiler and create this audio frontend IP ...
 
-Next, we modify the Python drivers, as the drivers should now expect PCM data instead of PDM data.
 
-Don't worry, the drivers have already been prewritten for you under the `lab2/drivers` directory. But before we make a simple copy and paste change, we should look at what is being done under the hood which allows you to simply make this change.
+### Task 2C: Connect audio frontend to BaseOverlay audio modules
 
-The structure is similar to the array merging drivers in Lab 1.
+
+
+
+### Task 2D: Modifying the drivers
+
+Next, we modify the Python drivers, as the drivers should now expect PCM data instead of PDM data. The theory is quite similar to the array merging drivers in Lab 1.
+
+> Please first read the `driver_instructions.md` in the `pcm_driver` folder.
+
+Before you follow the instructions and copy the new `audio.py`, let's understand what is happening in all of the files. As mentioned in the driver instructions files, a test/debug C++ driver was created for PCM. This did not exist in the original PYNQ codebase. The following link takes you to the original PYNQ C++ driver:
 
 https://github.com/Xilinx/PYNQ/blob/master/pynq/lib/_pynq/_audio/audio_direct.cpp
 
+Let's take a look at how the test/debug C++ driver works. Firstly, the register offsets relative to the base address of the AXI4 peripheral is defined as constants, as well as the transmit and receive FIFO flags. Secondly, we define two inline functions `Read32` and `Write32`, which allows us to read and write to these registers to control the AXI4 peripheral. Thirdly, we have the driver functions such as `record`, which controls the AXI4 peripheral to record and save the receiving FIFO data into our statically-allocated buffer.
 
+The C++ drivers which you interact with in the PYNQ codebase (under `pynq/lib/_pynq/_audio`) does basically the same thing, except rather than creating a static buffer in C++, it relies on a buffer created in the `audio.py` Python driver.
 
+Now let's take a look at the `new_audio.py`. For an easier diff, the functions are marked either `not changed` or `changed`, in comparison to PYNQ's original Python driver. As you should know from the `merge array` example in Lab 1, the Makefile first compiles the C++ drivers into a `libaudio.so` shared library file, which is then loaded by Python using the CFFI (C Foreign Function Interface). Main changes were made to the `record` and `save` functions, where the expected buffer data sampling rate and audio saving file type has been changed.
 
+> Fun fact: I had some troubles debugging the specific sampling rate number to be used in the Python `record` function. Read `sample-rate.txt` for a fuller explanation.
 
+> To make it clear, do not use the C++ or Makefile in the `pcm_driver` folder - read the insturctions in the markdown file and only use the contents from the `new_audio.py`.
+
+### Task 2E: Interacting with the drivers in Jupyter Notebook
+
+After following the driver instructions, now let's interact with them in Jupyter Notebook.
 
