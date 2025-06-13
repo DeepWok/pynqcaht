@@ -6,11 +6,14 @@
 
 To get started with the labs, we will first setup the required toolchain - this might be a bit troublesome, so please take advantage of the debugging notes `debug.md`.
 
-In this lab, we will use the PYNQ-Z1 board, with PYNQ image v2.7, and Vivado version 2020.2. I understand that some of you might have used different versions of Vivado before, but please download this version of Vivado as it is verified to work for a more stable version of the PYNQ image, which is v2.7.
+In this lab, we will use the PYNQ-Z1 board, with PYNQ image v3.1, and Vivado version 2024.2.
+
+> Tested Vivado versions:
+> - 2020.2
 
 If you encounter any issues, please first refer to the debugging notes `debug.md`, before approaching the TAs or the module leader.
 
-Operating system requirements: Windows 10 or 11, Ubuntu Linux
+Operating system requirements: Windows 10 or 11, Linux (Ubuntu)
 
 - This lab was created, tested and verified on a Windows 10 laptop running the above versions of the toolchains.
 - If you are using a MacOS device, options include:
@@ -19,7 +22,7 @@ Operating system requirements: Windows 10 or 11, Ubuntu Linux
 
 ### Step 1: Install Vivado
 
-Go to the following [page](https://www.xilinx.com/support/download.html) to download Vivado. For limited storage issues, refer to [debug.md](../debug.md/#limited-storage-space).
+Go to the following [page](https://www.xilinx.com/support/download.html) to download Vivado.  For limited storage issues, refer to [debug.md](../debug.md/#limited-storage-space).
 
 ### Step 2: Flashing the PYNQ image
 
@@ -29,19 +32,19 @@ Download the [Pynq SD Card Image](https://www.pynq.io/boards.html) onto the Py
 
 Once you have flashed the PYNQ image onto your SD card, insert it into the PYNQ-Z1 board and connect the power supply. The board should be powered by either a micro-USB cable or a 5V power supply. Remember to switch the pin on the board to either use the USB or power supply.
 
-![[../images/power_options_on_pynq_z1.jpg]]
+![Power options on PYNQ Z1 board](../images/power_options_on_pynq_z1.jpg)
 
-Let us now look into how the board works. The most important component is the Zynq-7000 System-On-Chip (SoC), which contains the Processing System (PS) made up of an ARM-Cortex A9 core, as well as the Programmable Logic (PL) which can be configured with custom hardware designs that we will soon create in Vivado. The block diagram for the Zynq-7000 SoC is shown below: <-- TODO: check permissions? -->
+Let us now look into how the board works. The most important component is the Zynq-7000 System-On-Chip (SoC), which contains the Processing System (PS) made up of an ARM-Cortex A9 core, as well as the Programmable Logic (PL) which can be configured with custom hardware designs that we will soon create in Vivado. The block diagram for the Zynq-7000 SoC is shown below:
 
-![[../images/Zynq-7000SBlockDiagram.jpg]]
+![Zynq-7000 SoC Block Diagram](../images/Zynq-7000SBlockDiagram.jpg)
 (Source: https://www.mouser.co.uk/new/xilinx/xilinx-zynq-7000-socs/)
 
 On top of this, the PYNQ framework provides a full Ubuntu-based Linux distribution on the SD card, with Linux drivers for the interfaces between the PS and PL, wrapped in Python libraries which makes the design easier. The following excerpt from Xilinx's introduction to PYNQ gives an excellent visual representation of the overall systems you will be working with:
 
-| ![[../images/pynq-workshop-slide-9.png]]  |
-| ----------------------------------------- |
-| ![[../images/pynq-workshop-slide-10.png]] |
-| ![[../images/pynq-workshop-slide-12.png]] |
+| ![PYNQ Workshop Slide 9](../images/pynq-workshop-slide-9.png)  |
+| ------------------------------------------------------------ |
+| ![PYNQ Workshop Slide 10](../images/pynq-workshop-slide-10.png) |
+| ![PYNQ Workshop Slide 12](../images/pynq-workshop-slide-12.png) |
 (Source: https://github.com/Xilinx/PYNQ_Workshop/blob/master/01_PYNQ_Workshop_introduction.pdf)
 
 ### Step 4: Connecting to Jupyter Notebook
@@ -52,10 +55,10 @@ By default, PYNQ uses a web interface to interact with the FPGA board. We will n
 
 #### Assigning a Static IP:
 
-PYNQ by default uses a static IP address of `192.168.2.99`. You should configure your laptop to also have an IP address **on the same subnet as the PYNQ-Z1 board** to be able to access the Jupyter Notebook server. You can refer back to the Network Layer lectures in the Software Systems module a deeper understanding.
+PYNQ by default uses a static IP address of `192.168.2.99`. You should configure your laptop to also have an IP address **on the same subnet as the PYNQ-Z1 board** (i.e. `192.168.2.x) to be able to access the Jupyter Notebook server.
 
 __Windows__
-Open up the `Network and Sharing Center`, and click on the `Ethernet connection`. Click on `Properties`, and then double-click on `Internet Protocol Version 4 (TCP/IPv4)`. Assign the following IP address: `192.168.2.x` where x is any number between 0 and 255, other than 99. 
+Open up the `Network and Sharing Center`, and click on the `Ethernet connection`. Click on `Properties`, and then double-click on `Internet Protocol Version 4 (TCP/IPv4)`. Assign the following IP address: `192.168.2.x` where x is any number between 0 and 255, other than 99.
 
 __Linux__
 Modify `/etc/network/interfaces` Ethernet interface:
@@ -89,7 +92,7 @@ Now we are ready to get started. Open up Vivado and create a new project.
 
 ### Creating a new project
 
-Open up Vivado and create a new project. 
+Open up Vivado and create a new project.
 
 //! Picture for starting page
 
@@ -121,6 +124,10 @@ On the column on the left hand side, click `Create Block Design`. You can leave 
 
 
 ### Loading the overlay on Jupyter Notebook
+
+## 1.3 Simple register control
+
+Here we
 
 
 

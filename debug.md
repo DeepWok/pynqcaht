@@ -39,7 +39,7 @@ Vivado and Vitis are huge programs, and they require a lot of space to install. 
 If you don't have enough space, the best method is to reduce the amount of board support selections. Since you are only expected to use the PYNQ-Z1 board, which is a Zynq-7000 series board, you can deselect support for all other boards types to reduce the installation size.
 
 ### Board parts not found (in Vivado during project creation)
-...
+Refer to https://github.com/Digilent/vivado-boards
 
 ### WiFi connection not active
 The best indication is always to try and `ping -c 4 8.8.8.8` to see if you have an active internet connection. If you are unable to ping, then your WiFi connection is not active. Note that packet losses may occur if the dongle is too far from the router.

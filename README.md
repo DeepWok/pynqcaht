@@ -2,12 +2,12 @@
 
 ## Introduction
 
-This repository contains the new labs for the 2025-2026 Imperial EIE Information Processing module. These labs focuses on introducing the Vivado toolchain and PYNQ ecosystem. 
+This repository contains the new labs for the 2025-2026 Imperial EIE Information Processing module. These labs focuses on introducing the Vivado toolchain and PYNQ ecosystem.
 
 The core idea of this module is to:
 Understand the choices and tradeoffs of placing information processing nodes on the edge (e.g. local FPGA) and remote cloud environments (e.g. AWS).
 
-Tested software versions: 
+Tested software versions:
 - Vivado 2020.2, PYNQ v2.7, Windows 10
 
 ## Schedule
@@ -20,13 +20,13 @@ There will be 4 lab weeks (2 hours of lab per week). The labs are designed to be
 | 2 | Lab 2 | Audio Processing |
 | 3 | Lab 3 | AWS |
 | 4 | Lab 4 | Building the chatbot |
-| Optional | Lab 5 | Extensions | 
+| Optional | Lab 5 | Extensions |
 
 ## Goal
 
 The goal of these labs is to create an interactive bot which uses the power of Whisper to understand your speech and communicate with you.
 
-Whisper is a... // not completed
+Whisper is a robust automatic speech recognition (ASR) model developed by OpenAI that can transcribe and translate speech across multiple languages with high accuracy.
 
 A general idea of the steps you will take:
 1. Setup the PYNQ board and go through a simple FIR filter tutorial to understand the PYNQ-Vivado ecosystem.
@@ -50,7 +50,7 @@ In this lab, you will setup the PYNQ board and Xilinx toolchain, and familiarise
 
 [Lab 2 - Audio Processing](labs/lab2/lab2.md)
 
-In this lab, you will explore the audio processing capabilities of the PYNQ board, and implement a software PDM-PCM conversion in Python. You will also design a hardware PDM-PCM conversion in Vivado, and compare the speed of the hardware and software implementations.
+In this lab, you will explore the audio processing capabilities of the PYNQ board, and implement a software PDM-PCM conversion in Python. You will also design a hardware PDM-PCM conversion in Vivado, and understand how to do basic embedded development with memory-mapped register control and driver development.
 
 ### Lab 3
 
@@ -72,7 +72,7 @@ Optional extensions for the labs, where you can explore different parts of the l
 
 ## Coursework
 
-Coursework will be...
+The coursework is open-ended, but must include the use of the PYNQ board and AWS.
 
 It should be noted that while you have been taught to use PYNQ's Jupyter Notebook infrastructure to communicate and send commands to the programmable logic, it is always possible to build application / memory controllers in BareMetal / PetaLinux. You may choose to do so for your project is you find it suitable.
 
