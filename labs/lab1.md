@@ -124,24 +124,56 @@ Now we are ready to get started. Open up Vivado and create a new project.
 
 //! Picture for adding ZYNQ7 Processing System (HP slave port)
 
-3. Add the Direct Memory Access (DMA). <TODO: add explanation>
+3. Add the `Direct Memory Access` (DMA) block. <TODO: add explanation>
 ![Add AXI Direct Memory Access (DMA)](/images/dma.png)
 
-4. Add the FIR filter: Vivado provides a wizard called the FIR Compiler which helps you to design your own filter. See <TODO: for more details>
+3.1 Double click on the `AXI DMA` block to customise it.
+3.2 Disable `Enable Scatter Gather Engine`,
+3.3 Maximise the size of the `Width of Buffer Length Register` to 26 bits.
+3.4 Press ok to exit the wizard.
+
+4. Add the FIR filter: Vivado provides a wizard called the `FIR Compiler` which helps you to design your own filter. See <TODO: for more details>
 ![Add FIR Compiler Block](/images/fir_compiler.png)
 
-5. Run Block Automation <TODO: What does this do?>
+4.1. Create the FIR filter by specifying the coefficients. Double click on the FIR Compiler block to customise the IP, and paste in the following coefficients: <TODO: should students be deriving/designing the coefficients on their own?> 
+```
+-255, -260, -312, -288, -144, 153, 616, 1233, 1963, 2739, 3474, 4081, 4481, 4620, 4481, 4081, 3474, 2739, 1963, 1233, 616, 153, -144, -288, -312, -260, -255
+```
+
+4.2 Next: On the `Channel Specification` tab: change the `Input Sampling Frequency` and the `Clock Frequency` to 100MHz. Thus each clock tick on the FPGA will feed one input to the FIR filter.
+
+4.3 On the Implementation tab: we should change the `Input Data Width` to 32 bits. We also want the output to have 32 bits, so select the `Output Rounding Mode` to `Non Symmetric Rounding Up` and then change the `Output Width` to 32 bits.
+
+4.4 In the `Interface` tab, we specify how this block should communicate on the AXI bus, in this case, we should enable `Output TREADY` and `TLAST` via `Packet Framing`. It is slightly out of scope to read into the AXI protocol, but if you are interested, you may want to read up on it.
+
+4.5 Press OK to end the customise IP wizard.
+
+5. Connect the DMA to the FIR Compiler block:
+5.1 We connect the `M_AXIS_DATA` from the output of the FIR compiler to the `S_AXIS_S2MM` (Slave AXI interface for Stream-to-Memory-Mapped transfers) input port of the AXI DMA Block. 
+5.2 Then, we connect the `M_AXI_S2MM` (Master AXI interface for Stream-to-Memory-Mapped transfers) ouput port of the DMA to the `S_AXIS_DATA` input port of the FIR Compiler. This allows us to feed a memory-mapped data format used by the DMA into the streaming input of signal data that the FIR compiler expects.
+5.3: Your block diagram should look like this:
+![DMA to FIR Compiler Connections](/images/dma_to_fir_connection.png)
+
+6. Now, we connect this up to the ZYNQ Processing System, so that the DMA can access the DDR Memory that is present in the PS.
+
+6.1 Double click the ZYNQ7 Processing System to edit it, and double click on the `High Performance AXI Slave Ports` to edit them.
+6.2 Enable one port, for example the `HP0` port.
+6.3 Then save and exit the customization.
+
+![Zynq Block Design](/images/zynq-block-design.png)
+
+7. Run Block Automation <TODO: What does this do?>
 
 ![Block Automation](/images/block_automation.png)
 
-6. Run Connection Automation, Vivado intelligently maps input ports and output ports together.
+8. Run Connection Automation, Vivado intelligently maps input ports and output ports together. Select all the ports in the tree view.
 
 ![Connection Automation](/images/connection_automation.png)
 
+9. Rename the `FIR Compiler` block to `fir`, and the `AXI DMA` block to `fir_dma`. This will make it cleaner to access in the Jupyter Notebook when we are utilising these accelerators.
 You should have a design that looks something like this:
 
 ![Final Block Design](/images/final_block_design.png)
-
 
 ### Exporting the hardware
 
