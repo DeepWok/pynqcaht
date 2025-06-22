@@ -92,7 +92,7 @@ Now we are ready to get started. Open up Vivado and create a new project.
 
 ### Creating a new project
 
-1. Open up Vivado and create a new project. 
+1. Open up Vivado and create a new project.
 2. Press Next after reading the wizard.
 3. Enter a suitable name and location for the project. Ensure check subdirectory is enabled so that your project files are contained in a parent folder.
 4. Press Next.
@@ -111,7 +111,7 @@ Now we are ready to get started. Open up Vivado and create a new project.
 
 ![Vivado New Project Wizard Summary](/images/new_project_summary.png)
 
-> Board part troubleshooting: If you are unable to find the PYNQ-Z1 board part (xc7z020-1clg400c), refer to the troubleshooting section in [debug.md](../debug.md/#board-parts-not-found).
+> Board part troubleshooting: If you are unable to find the PYNQ-Z1 board, refer to the troubleshooting section in [debug.md](../debug.md/#board-parts-not-found). Note that instead of clicking on `Boards`, you may also directly select from `Parts` the board part part (xc7z020-1clg400c).
 
 ### Creating the block design
 
@@ -119,12 +119,14 @@ Now we are ready to get started. Open up Vivado and create a new project.
 
 ![Create Block Design](/images/create_block_design.png)
 
-2. Add the Zynq7 processing system this contains the interfaces to the dual ARM cores on the FPGA. Inside the zynq7 PS IP settings theres a part which notes how many HP slave ports are needed (just one in this case, HP0)
+2. Add the Zynq7 processing system - this contains the interfaces to the dual ARM cores on the FPGA. Inside the Zynq7 PS IP settings, there is a part which notes how many HP slave ports are needed (only one needed in this case, HP0).
+
 ![Add Zynq Processing System IP](/images/add_ip.png)
 
 //! Picture for adding ZYNQ7 Processing System (HP slave port)
 
 3. Add the `Direct Memory Access` (DMA) block. <TODO: add explanation>
+
 ![Add AXI Direct Memory Access (DMA)](/images/dma.png)
 
 3.1 Double click on the `AXI DMA` block to customise it.
@@ -133,24 +135,28 @@ Now we are ready to get started. Open up Vivado and create a new project.
 3.4 Press ok to exit the wizard.
 
 4. Add the FIR filter: Vivado provides a wizard called the `FIR Compiler` which helps you to design your own filter. See <TODO: for more details>
+
 ![Add FIR Compiler Block](/images/fir_compiler.png)
 
-4.1. Create the FIR filter by specifying the coefficients. Double click on the FIR Compiler block to customise the IP, and paste in the following coefficients: <TODO: should students be deriving/designing the coefficients on their own?> 
+4.1. Create the FIR filter by specifying the coefficients. Double click on the FIR Compiler block to customise the IP, and paste in the following coefficients:
 ```
 -255, -260, -312, -288, -144, 153, 616, 1233, 1963, 2739, 3474, 4081, 4481, 4620, 4481, 4081, 3474, 2739, 1963, 1233, 616, 153, -144, -288, -312, -260, -255
 ```
 
-4.2 Next: On the `Channel Specification` tab: change the `Input Sampling Frequency` and the `Clock Frequency` to 100MHz. Thus each clock tick on the FPGA will feed one input to the FIR filter.
+4.2 Next, on the `Channel Specification` tab: change the `Input Sampling Frequency` and the `Clock Frequency` to 100MHz. Thus each clock tick on the FPGA will feed one input to the FIR filter.
 
 4.3 On the Implementation tab: we should change the `Input Data Width` to 32 bits. We also want the output to have 32 bits, so select the `Output Rounding Mode` to `Non Symmetric Rounding Up` and then change the `Output Width` to 32 bits.
 
-4.4 In the `Interface` tab, we specify how this block should communicate on the AXI bus, in this case, we should enable `Output TREADY` and `TLAST` via `Packet Framing`. It is slightly out of scope to read into the AXI protocol, but if you are interested, you may want to read up on it.
+4.4 In the `Interface` tab, we specify how this block should communicate on the AXI bus, in this case, we should enable `Output TREADY` and `TLAST` via `Packet Framing`. It is slightly out of scope to read into the AXI Stream protocol, but if you are interested, you may want to read up on it.
 
 4.5 Press OK to end the customise IP wizard.
 
 5. Connect the DMA to the FIR Compiler block:
-5.1 We connect the `M_AXIS_DATA` from the output of the FIR compiler to the `S_AXIS_S2MM` (Slave AXI interface for Stream-to-Memory-Mapped transfers) input port of the AXI DMA Block. 
+
+5.1 We connect the `M_AXIS_DATA` from the output of the FIR compiler to the `S_AXIS_S2MM` (Slave AXI interface for Stream-to-Memory-Mapped transfers) input port of the AXI DMA Block.
+
 5.2 Then, we connect the `M_AXI_S2MM` (Master AXI interface for Stream-to-Memory-Mapped transfers) ouput port of the DMA to the `S_AXIS_DATA` input port of the FIR Compiler. This allows us to feed a memory-mapped data format used by the DMA into the streaming input of signal data that the FIR compiler expects.
+
 5.3: Your block diagram should look like this:
 ![DMA to FIR Compiler Connections](/images/dma_to_fir_connection.png)
 
