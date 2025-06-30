@@ -1,0 +1,43 @@
+PCM sample - 37.5kHz
+PDM sample - 2.4MHz
+
+PDM actual sample - around 195.3kHz (code says 192kHz, community recorded around 195300)
+PCM actual sample - around 19.53kHz
+
+We observe a 10x difference.
+
+Using an ILA we observe that the period for each 32-bit word (PCM) / between TVALID highs is around 2559. Dividing 50MHz PLL
+clock frequency by 2560 gives approximately 19.5kHz, which is verificies the PCM actual sample.
+
+From the FIR filter instantiation:
+50 MHz, 2.4MHz target input sample rate, 50M/21 = 2.4MHz actual input sample rate
+2.4M/64 = 37.5kHz
+Actual achieved: 19.53kHz
+
+Critical factors behind 2559cycles:
+- DSP48 pipeline stages --> each of the 5 filter stages adds latency
+- 64:1 decimation requires --> 21 cycles/sample x 64 = 1344 cycles (actual: 2559cycles)
+- Filter requires additional cycles to handle phase alignment between decimation stages
+- Valid-ready handshakes require acknowledgement delay
+- XIlinx filter IPs add safety margins to ensure timing closure
+
+> Pipeline latency
+The 5-stage decimation filter requires symmetry-driven padding 
+Each stage adds latency from: 
+- Symmetric coefficient pairing logic 
+- Zero-padding to align phases
+
+> Clock domain alignment
+- Padding ensures coefficients align with polyphase partitions
+- Forces specific register stages in AXI-Stream interface
+- Adds handshaking cycles between valid-ready signals
+
+Total cycles = (Base decimation cycles) + (Symmetry/padding overhead)
+             = (21 cycles/sample × 64) + (5 stages × 243 cycles)
+             = 1344 + 1215
+             = 2559
+
+243 cycle/stage overhead comes from:
+- 32-bit output packing (2-bit PDM to 32-bit PCM)
+- Symmetric coefficient handling (coefficient padding requirements)
+- Pipeline registers for symmetry optimization
