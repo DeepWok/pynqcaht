@@ -183,12 +183,14 @@ You should have a design that looks something like this:
 
 ### Exporting the hardware
 
+???
+
 
 ### Loading the overlay on Jupyter Notebook
 
 ## 1.3 Simple register control (merge array)
 
-Here we attempt a simple array merging procedure
+Here we attempt a simple array merging procedure. The purpose is to get a better understanding of how MMIO (memory-mapped IO) works and how to do simple register control on a bunch of fuckers.
 
-Don't worry, the drivers have already been prewritten for you under the `drivers` folder. But before we make a simple copy and paste change, we should look at what is being done under the hood which allows you to simply make this change.
+Don't worry, the drivers have already been prewritten for you under the `drivers/merge_driver` folder. Let's look at what is being done under the hood which allows you to simply make this change.
 
