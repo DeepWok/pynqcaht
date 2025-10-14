@@ -190,7 +190,24 @@ You should have a design that looks something like this:
 
 ## 1.3 Simple register control (merge array)
 
-Here we attempt a simple array merging procedure. The purpose is to get a better understanding of how MMIO (memory-mapped IO) works and how to do simple register control on a bunch of fuckers.
+Here we attempt a simple array merging procedure. The purpose is to get a better understanding of how MMIO (memory-mapped IO) works and how to do simple register control.
 
 Don't worry, the drivers have already been prewritten for you under the `drivers/merge_driver` folder. Let's look at what is being done under the hood which allows you to simply make this change.
 
+The driver folder contains
+
+Driver placement:
+- Either do through putty or terminal in jupyter notebook
+
+under /home/xilinx/pynq/lib:
+- merge.py
+
+under /home/xilinx/pynq/lib/_pynq/_merge:
+- merge_driver.cpp
+- merge_driver.h
+- Makefile
+
+run make
+cp libmerge.so from _merge/ to lib/
+
+Run the jupyter notebook
