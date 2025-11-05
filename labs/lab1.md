@@ -188,26 +188,110 @@ You should have a design that looks something like this:
 
 ### Loading the overlay on Jupyter Notebook
 
+???
+
 ## 1.3 Simple register control (merge array)
 
 Here we attempt a simple array merging procedure. The purpose is to get a better understanding of how MMIO (memory-mapped IO) works and how to do simple register control.
 
+Let's start off by creating a block design which allows us to do the operation below, but in hardware:
+```
+[1,3,5] + [2,4,6] => [1,2,3,4,5,6]
+```
+
+### Step 1: Creating the block design
+
+
+
+### Step 2: Create the drivers
+
+Now onto the drivers!
+
 Don't worry, the drivers have already been prewritten for you under the `drivers/merge_driver` folder. Let's look at what is being done under the hood which allows you to simply make this change.
 
-The driver folder contains
+The `merge_driver` folder contains several files that you will need to place in your PYNQ board's Linux system. You can either do that through PuTTY or the terminal in Jupyter Notebook.
 
-Driver placement:
-- Either do through putty or terminal in jupyter notebook
+![Placement of Merge Drivers in PYNQ](/images/merge_drivers_placement.jpg)
 
-under /home/xilinx/pynq/lib:
+The screenshot above shows the drivers placement relative to the path `/home/xilinx/pynq/lib` on your PYNQ board. For clearer reference:
+
+Under /home/xilinx/pynq/lib:
 - merge.py
 
-under /home/xilinx/pynq/lib/_pynq/_merge:
+Under /home/xilinx/pynq/lib/_pynq/_merge:
 - merge_driver.cpp
 - merge_driver.h
 - Makefile
 
-run make
-cp libmerge.so from _merge/ to lib/
+To build `libmerge.so` from the C++ source files (`merge_driver.cpp` and `merge_driver.h`):
 
-Run the jupyter notebook
+1. Navigate to the directory containing the Makefile: `/home/xilinx/pynq/lib/_pynq/_merge`
+```
+cd /home/xilinx/pynq/lib/_pynq/_merge
+```
+2. Run the `make` command, which will compile the C++ code and create the shared library
+```
+make
+```
+3. Copy `libmerge.so` from the `/home/xilinx/pynq/lib/_merge/` directory to the `/home/xilinx/pynq/lib/` directory
+```
+cp libmerge.so ../
+```
+
+### Step 3: Understanding the drivers
+
+What exactly are the drivers doing?
+
+The driver code creates a bridge between Python and the custom hardware on the FPGA, allowing you to control registers and pass data between the PS (ARM processor) and PL (FPGA fabric) efficiently.
+
+First, we look at the C++ driver layer that interacts with the AXI4 peripheral that we instantiated in the block design.
+
+#### C++ driver layer
+
+The header file (`merge_driver.h`) defines memory-mapped register offsets for your merge IP core. You will observe them being called by `BaseAddr + SOME_REG_OFFSET` in the C++ driver file.
+
+The C++ driver file (`merge_driver.cpp`) contains `merge_read()` and `merge_write()` functions which perform memory access to the hardware registers using volatile pointers:
+```
+*(volatile uint32_t *)addr = data;
+```
+The `volatile` keyword prevents compiler optimization, ensuring every read/write actually accesses the hardware registers.​
+
+Looking at the `merge` function:
+
+It first loops through arrays `a` and `b`, writing each element to `MERGE_1_REG` and `MERGE_2_REG` respectively. It then writes `0x1` to MERGE_CTRL_REG to trigger the hardware merge.
+
+Next, it continuously reads `MERGE_STATUS_REG` until it returns 0, indicating completion. Finally, it reads the merged output from `MERGE_RESULT_REG`, storing it in the output buffer `BufAddr`.
+
+The extern "C" linkage prevents C++ name mangling, making the function callable from C-style interfaces.
+
+#### Python driver layer
+
+1. How can we control these C++ functions?
+
+Notice the use of `cffi` in Python? This stands for "C Foreign Function Interface", an [interface in Python used for calling C code](https://pypi.org/project/cffi/).
+
+The Python driver uses CFFI to load and call the compiled C++ library:
+```
+self._libmerge = self._ffi.dlopen(os.path.join(LIB_SEARCH_PATH, "libmerge.so"))
+```
+CFFI provides a clean way to transfer data between Python and C/C++, handling type conversions automatically.
+
+Usually, embedded developers simply interface with the hardware by directly writing C drivers - PYNQ was created to lower the boundary of FPGA embedded development by pre-writing most drivers and wrapping them in C++.
+
+The `cdef()` calls declare the C function signatures so CFFI knows how to call them:
+```
+self._ffi.cdef("void merge(unsigned int BaseAddr, ...);")
+```
+
+The MergeIP class inherits from DefaultIP, integrating with PYNQ's overlay system. The initialization includes:
+
+- `bindto`: Specifies which Vivado IP block this driver controls (matches the IP's `VLNV` identifier)
+
+- `self.mmio.array`: Provides access to the memory-mapped address space of the IP
+
+- `self.buffer`: NumPy array which stores the output result, which is the merged array
+
+2. Where do the arrays `unsigned int *a` and `unsigned int *b` come from?
+
+-
+

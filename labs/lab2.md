@@ -9,7 +9,7 @@ Quoting the PYNQ documentation:
 
 For further information, please read: https://pynq.readthedocs.io/en/latest/pynq_overlays/pynqz1/pynqz1_base_overlay.html
 
-As the BaseOverlay is incredibly large, please use the file `something` in the current directory for the next few sections for faster synthesis and bitstream generation. This file contains a slimmed-down version of the original BaseOverlay, where only support for audio processing remains.
+As the BaseOverlay is incredibly large, please use the file `something .... ????` in the current directory for the next few sections for faster synthesis and bitstream generation. This file contains a slimmed-down version of the original BaseOverlay, where only support for audio processing remains.
 
 ## 2.2 Audio Processing (Software)
 
@@ -58,13 +58,13 @@ Inside the ... file, we see [show the code that gives the regsiter offsets]
 
 To use these control registers, PYNQ has written [C++ audio driver](https://github.com/Xilinx/PYNQ/blob/master/pynq/lib/_pynq/_audio/audio_direct.cpp#L59) which writes values to these register offsets to control the behaviour of the FIFO (which is basically what you would do in embedded development). You can match the register offsets in the `vhdl` file with the audio controller registers in the [header file of the C++ audio driver](https://github.com/Xilinx/PYNQ/blob/master/pynq/lib/_pynq/_audio/audio_direct.h).
 
-So how does the Python audio driver use the C++ functions? Notice the use of `cffi` in Python? This stands for "C Foreign Function Interface", an [interface in Python used for calling C code](https://pypi.org/project/cffi/). The low-level operations written in C++ above get compiled into a shared libary file `libaudio.so`. Python then loads this file:
+So how does the Python audio driver use the C++ functions? Remember CFFI from lab 1? The low-level operations written in C++ above get compiled into a shared libary file `libaudio.so`. Python then loads this file:
 
 ```python
 self._libaudio = self._ffi.dlopen(LIB_SEARCH_PATH + "/libaudio.so")
 ```
 
-which is compiled from the C++ audio drivers using CMake. Usually, embedded developers simply interface with the hardware by directly writing C drivers - PYNQ was created to lower the boundary of FPGA embedded development by pre-writing most drivers and wrapping them in C++.
+which is compiled from the C++ audio drivers using CMake.
 
 Now let's do the hardware programming!
 
@@ -86,7 +86,7 @@ Useful references:
 
 ### Task 2C: Connect audio frontend to BaseOverlay audio modules
 
-
+...
 
 
 ### Task 2D: Modifying the drivers
@@ -107,9 +107,11 @@ Now let's take a look at the `new_audio.py`. For an easier diff, the functions a
 
 > Fun fact: I had some troubles debugging the specific sampling rate number to be used in the Python `record` function. Read `sample-rate.txt` for a fuller explanation.
 
-> To make it clear, do not use the C++ or Makefile in the `pcm_driver` folder - read the insturctions in the markdown file and only use the contents from the `new_audio.py`.
+> To make it clear, do not use the C++ or Makefile in the `pcm_driver` folder - read the instructions in the markdown file and only use the contents from the `new_audio.py`.
 
 ### Task 2E: Interacting with the drivers in Jupyter Notebook
 
 After following the driver instructions, now let's interact with them in Jupyter Notebook.
+
+...
 
