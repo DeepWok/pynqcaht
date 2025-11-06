@@ -5,11 +5,9 @@
 In this section, we will utilise the microphone input and audio output on the PYNQ-Z1 board, and setup audio processing capabilities for future sections. We first explore the Base Overlay design provided by the PYNQ team.
 
 Quoting the PYNQ documentation:
-> The purpose of the base overlay design is to allow PYNQ to use peripherals on a board out-of-the-box. The design includes hardware IP to control peripherals on the target board, and connects these IP blocks to the Zynq PS. If a base overlay is available for a board, peripherals can be used from the Python environment immediately after the system boots.
+"The purpose of the base overlay design is to allow PYNQ to use peripherals on a board out-of-the-box. The design includes hardware IP to control peripherals on the target board, and connects these IP blocks to the Zynq PS. If a base overlay is available for a board, peripherals can be used from the Python environment immediately after the system boots"
 
-For further information, please read: https://pynq.readthedocs.io/en/latest/pynq_overlays/pynqz1/pynqz1_base_overlay.html
-
-As the BaseOverlay is incredibly large, please use the file `something .... ????` in the current directory for the next few sections for faster synthesis and bitstream generation. This file contains a slimmed-down version of the original BaseOverlay, where only support for audio processing remains.
+> For further information, please read: https://pynq.readthedocs.io/en/latest/pynq_overlays/pynqz1/pynqz1_base_overlay.html
 
 ## 2.2 Audio Processing (Software)
 
@@ -32,9 +30,13 @@ Let's start by implementing a software PDM-PCM conversion function in Python.
 
 ### Task 2A: Software PDM-PCM conversion function
 
-Need something here lol
+The PYNQ-Z1 board's BaseOverlay lets you easily record and play back audio using the onboard MEMS microphone and audio output. The software controls allow you to record, save, and play audio using simple Python functions.
 
-https://github.com/Xilinx/PYNQ/blob/master/boards/Pynq-Z1/base/notebooks/audio/audio_playback.ipynb
+You can adjust recording time and playback volume, and visualize or process recordings directly in Python.
+
+Try it yourself - Download and run the audio_playback.ipynb Jupyter notebook (provided by PYNQ) to experiment with recording and playing back audio on your board.
+
+> Provided Jupyter Notebook from PYNQ: https://github.com/Xilinx/PYNQ/blob/master/boards/Pynq-Z1/base/notebooks/audio/audio_playback.ipynb
 
 ## 2.3 Audio Processing (Hardware)
 
@@ -42,9 +44,9 @@ In this section you will get to understand how exactly the PYNQ acts as a "embed
 
 Let's start by understanding the audio module in the BaseOverlay. Click open `<expand the IP>`.
 
-[Pic of audio module outer layer]
+[Pic of audio module outer layer] TODO
 
-[Pic of the files under the hood]
+[Pic of the files under the hood] TODO
 
 Here we see the audio module's internal hierarchy - under the IP, there is a `base_audio_direct.sv` file, which contains an `audio_direct_v1_1.sv` file. The `audio_direct_v1_1.sv` is the actual IP that was developed by the PYNQ / Digilent teams, while the `base_audio_direct.sv` file is auto-generated when you add your IP to your block design and interface it with other components.
 
@@ -52,11 +54,9 @@ Under the `audio_direct` IP, we see two different hierarchies - one named the `d
 
 But remember that in section 2.1, you were also able to record to an audio buffer and save the audio data from the buffer? How exactly is the buffer built?
 
-That's where the `d_axi_pdm_v1_2_S_AXI` module comes in. The `vhdl` might seem confusing, but essentially it just instantiates a FIFO that can be controlled through certain register offsets in the drivers. This can be done by instantiating an `AXI4 Peripheral`. Let's examine this more carefully:
+That's where the `d_axi_pdm_v1_2_S_AXI` module comes in. The `vhdl` might seem confusing, but essentially it just instantiates a FIFO that can be controlled through certain register offsets in the drivers. This can be done by instantiating an `AXI4 Peripheral`, which is the method we used in lab 1 task 1.3.
 
-Inside the ... file, we see [show the code that gives the regsiter offsets]
-
-To use these control registers, PYNQ has written [C++ audio driver](https://github.com/Xilinx/PYNQ/blob/master/pynq/lib/_pynq/_audio/audio_direct.cpp#L59) which writes values to these register offsets to control the behaviour of the FIFO (which is basically what you would do in embedded development). You can match the register offsets in the `vhdl` file with the audio controller registers in the [header file of the C++ audio driver](https://github.com/Xilinx/PYNQ/blob/master/pynq/lib/_pynq/_audio/audio_direct.h).
+Similar to us writing our own merge array drivers, PYNQ has written [C++ audio drivers](https://github.com/Xilinx/PYNQ/blob/master/pynq/lib/_pynq/_audio/audio_direct.cpp#L59) which writes values to these register offsets to control the behaviour of the FIFO. You can match the register offsets in the `vhdl` file with the audio controller registers in the [header file of the C++ audio driver](https://github.com/Xilinx/PYNQ/blob/master/pynq/lib/_pynq/_audio/audio_direct.h).
 
 So how does the Python audio driver use the C++ functions? Remember CFFI from lab 1? The low-level operations written in C++ above get compiled into a shared libary file `libaudio.so`. Python then loads this file:
 
@@ -66,14 +66,15 @@ self._libaudio = self._ffi.dlopen(LIB_SEARCH_PATH + "/libaudio.so")
 
 which is compiled from the C++ audio drivers using CMake.
 
-For convenience, I have provided a shrunk down version of the BaseOverlay as a .tcl script. Running the script will open up a new design
+As the BaseOverlay is incredibly large. For convenience, I have provided a shrunk down version of the BaseOverlay as a .tcl script under `bd/lab2/lab2-skeleton`. Running the script will open up a new design.
 
-!!!(add instructions on how to run the script in vivado)
+> If you don't know how to launch the .tcl script from terminal or Vivado gui, follow the instructions in this link: https://xilinx.github.io/Alveo-Cards/cards/ul3524/build/html/docs/Docs/loading_ref_proj.html
 
-Our final goal is of this hardware section is to create a block design that does the PDM-to-PCM conversion, by making changes on top of the BaseOverlay's audio infrastructure. This is a picture of the end goal:
+Our final goal is of this hardware section is to create a block design that does the PDM-to-PCM conversion, by making changes on top of the BaseOverlay's audio infrastructure.
+
+This is a picture of the end goal:
 
 ![](/images/end-goal.jpg)
-
 
 Now let's do the hardware programming!
 
@@ -88,19 +89,19 @@ Useful references:
 - [CIC Filters Explained (YouTube)](https://www.youtube.com/watch?v=8RbUSaZ9RGY)
 - [CIC Compiler Documentation - AMD](https://docs.amd.com/v/u/en-US/pg140-cic-compiler)
 
-At the end
+[Add a diagram showing we will add an audio frontend in front of the audio ip] TODO
 
-[Add a diagram showing we will add an audio frontend in front of the audio ip]
+TODO: Entire 2B part
 
-... instructions here on how to add the CIC compiler and create this audio frontend IP ...
+### Task 2C: Modifying the audio_direct ip to work with PCM data
 
+TODO: Entire 2C part
 
-### Task 2C: Connect audio frontend to BaseOverlay audio modules
+### Task 2D: Connect audio frontend to BaseOverlay audio modules
 
-...
+TODO: Entire 2D part
 
-
-### Task 2D: Modifying the drivers
+### Task 2E: Modifying the drivers
 
 Next, we modify the Python drivers, as the drivers should now expect PCM data instead of PDM data. The theory is quite similar to the array merging drivers in Lab 1.
 
@@ -120,9 +121,13 @@ Now let's take a look at the `new_audio.py`. For an easier diff, the functions a
 
 > To make it clear, do not use the C++ or Makefile in the `pcm_driver` folder - read the instructions in the markdown file and only use the contents from the `new_audio.py`.
 
-### Task 2E: Interacting with the drivers in Jupyter Notebook
+### Task 2F: Interacting with the drivers in Jupyter Notebook
 
 After following the driver instructions, now let's interact with them in Jupyter Notebook.
 
-...
+Upload the `lab2-hw.ipynb` notebook from `jupyter_notebook/lab2` to your PYNQ board. Running all the cells should record and save a file named "rec1.wav". Download that file to your local device, and try playing it with your OS's default audio player. Check that you can hear the full recorded audio.
+
+## 2.4 Conclusion
+
+Congratulations for ... <TODO>
 
