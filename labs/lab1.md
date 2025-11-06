@@ -99,6 +99,7 @@ Now we are ready to get started. Open up Vivado and create a new project.
 5. Select RTL Project, for now: "do not specify the sources".
 6. Press Next.
 7. Select the PYNQ-Z1 board (you may need to install board files in Vivado, see below.) Double click on the part number to select it and move onto the summary.
+> If you are unable to find PYNQ-Z1, go to `Parts` instead of `Boards`, and select `xc7z020clg400-1` part.
 8. Press Finish.
 
 ![Vivado Start Page](/images/starting_page.png)
@@ -122,8 +123,6 @@ Now we are ready to get started. Open up Vivado and create a new project.
 2. Add the Zynq7 processing system - this contains the interfaces to the dual ARM cores on the FPGA. Inside the Zynq7 PS IP settings, there is a part which notes how many HP slave ports are needed (only one needed in this case, HP0).
 
 ![Add Zynq Processing System IP](/images/add_ip.png)
-
-//! Picture for adding ZYNQ7 Processing System (HP slave port)
 
 3. Add the `Direct Memory Access` (DMA) block. <TODO: add explanation>
 
@@ -168,7 +167,7 @@ Now we are ready to get started. Open up Vivado and create a new project.
 
 ![Zynq Block Design](/images/zynq-block-design.png)
 
-7. Run Block Automation <TODO: What does this do?>
+7. Run Block Automation
 
 ![Block Automation](/images/block_automation.png)
 
@@ -200,6 +199,9 @@ Let's start off by creating a block design which allows us to do the operation b
 ```
 
 ### Step 1: Creating the block design
+
+In this section, we will create two projects. Similar to the previous section, we first create a Vivado project - `merge_array_ip`.
+
 
 
 
