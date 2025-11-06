@@ -45,13 +45,13 @@ class MergeIP(DefaultIP):
 
         self.buffer = numpy.zeros(0).astype(numpy.uint32)
 
-    bindto = ['xilinx.com:user:merge_v1_0:1.0']
+    bindto = ['xilinx.com:user:merge_v1_0:1.0'] # Modify based on how you named the IP during creation
 
     def merge(self, a, b):
-        
+
         if self.buffer.dtype.type != numpy.uint32:
             raise ValueError("Internal buffer must be of type uint32")
-        
+
         a = numpy.array(a, dtype=numpy.uint32)
         b = numpy.array(b, dtype=numpy.uint32)
 

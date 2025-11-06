@@ -104,9 +104,7 @@ Now we are ready to get started. Open up Vivado and create a new project.
 
 ![Vivado Start Page](/images/starting_page.png)
 
-
 ![Vivado New Project Page](/images/new_project_page.png)
-
 
 ![Vivado Part Select Page](/images/part_select.png)
 
@@ -124,7 +122,7 @@ Now we are ready to get started. Open up Vivado and create a new project.
 
 ![Add Zynq Processing System IP](/images/add_ip.png)
 
-3. Add the `Direct Memory Access` (DMA) block. <TODO: add explanation>
+3. Add the `Direct Memory Access` (DMA) block.
 
 ![Add AXI Direct Memory Access (DMA)](/images/dma.png)
 
@@ -133,7 +131,7 @@ Now we are ready to get started. Open up Vivado and create a new project.
 3.3 Maximise the size of the `Width of Buffer Length Register` to 26 bits.
 3.4 Press ok to exit the wizard.
 
-4. Add the FIR filter: Vivado provides a wizard called the `FIR Compiler` which helps you to design your own filter. See <TODO: for more details>
+4. Add the FIR filter: Vivado provides a wizard called the `FIR Compiler` which helps you to design your own filter.
 
 ![Add FIR Compiler Block](/images/fir_compiler.png)
 
@@ -198,9 +196,242 @@ Let's start off by creating a block design which allows us to do the operation b
 [1,3,5] + [2,4,6] => [1,2,3,4,5,6]
 ```
 
+> Reference video for a similar design: [Make a RTL-based IP work with PYNQ - AXILite adder](https://youtu.be/RPTuhVeoGTI?si=gbzsbD1SdPM9QIfI)
+
 ### Step 1: Creating the block design
 
-In this section, we will create two projects. Similar to the previous section, we first create a Vivado project - `merge_array_ip`.
+Similar to the previous section, we first create a project (you can name it `merge_array`).
+
+1. Creating the block design
+
+We first create a block design, and include the Zynq 7 processing system.
+
+2. Creating the merge array ip
+
+Select `Tools > Create and Package New IP`.
+
+When prompted with options, select "Create a new AXI4 peripheral".
+
+![New AXI4 peripheral](/images/new_axi4_periph.jpg)
+
+3. Modifying the merge array ip
+
+I'll guide you through transforming the first template into the second one step by step.
+
+After the existing signal declarations (after `reg aw_en;`), add:
+
+```systemverilog
+reg	 aw_en;
+
+// Add these new signals:
+wire fsmStart;
+wire sortDone;
+reg fifo1_wr_en;
+reg fifo2_wr_en;
+wire [31:0] mergedFifoRdData;
+```
+
+After the I/O connection assignments (after `assign S_AXI_RVALID = axi_rvalid;`), add:
+
+```systemverilog
+assign S_AXI_RVALID	= axi_rvalid;
+
+// Add this:
+assign fsmStart = slv_reg0[0];
+```
+
+Find the large `always` block:
+```systemverilog
+always @( posedge S_AXI_ACLK )
+begin
+  if ( S_AXI_ARESETN == 1'b0 )
+    begin
+      slv_reg0 <= 0;
+      slv_reg1 <= 0;
+      slv_reg2 <= 0;
+      slv_reg3 <= 0;
+      slv_reg4 <= 0;
+    end
+  else begin
+    if (slv_reg_wren)
+      begin
+        case ( axi_awaddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB] )
+          // ... all the case statements ...
+        endcase
+      end
+  end
+end
+```
+
+**Delete this entire block** and replace it with:
+
+```systemverilog
+// slv_reg0 handling
+always @( posedge S_AXI_ACLK )
+begin
+  if ( S_AXI_ARESETN == 1'b0 )
+    begin
+      slv_reg0 <= 0;
+    end
+  else begin
+    if (sortDone)
+       slv_reg0 <= 0;
+    if (slv_reg_wren && axi_awaddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB] == 0)
+       slv_reg0 <= S_AXI_WDATA;
+  end
+end
+
+// slv_reg1 handling
+always @( posedge S_AXI_ACLK )
+begin
+  if ( S_AXI_ARESETN == 1'b0 )
+    begin
+      slv_reg1 <= 0;
+    end
+  else begin
+    if (sortDone)
+       slv_reg1 <= 1;
+    if (slv_reg_wren && axi_awaddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB] == 1)
+       slv_reg1 <= S_AXI_WDATA;
+  end
+end
+
+// fifo1_wr_en handling (replaces slv_reg3)
+always @( posedge S_AXI_ACLK )
+begin
+  if ( S_AXI_ARESETN == 1'b0 )
+    begin
+       fifo1_wr_en <= 0;
+    end
+  else begin
+    if (sortDone)
+       slv_reg0 <= 0;
+    if (slv_reg_wren && axi_awaddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB] == 3)
+        fifo1_wr_en <= 1'b1;
+    else
+        fifo1_wr_en <= 1'b0;
+  end
+end
+
+// fifo2_wr_en handling (replaces slv_reg4)
+always @( posedge S_AXI_ACLK )
+begin
+  if ( S_AXI_ARESETN == 1'b0 )
+    begin
+       fifo2_wr_en <= 0;
+    end
+  else begin
+    if (sortDone)
+       slv_reg0 <= 0;
+    if (slv_reg_wren && axi_awaddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB] == 4)
+        fifo2_wr_en <= 1'b1;
+    else
+        fifo2_wr_en <= 1'b0;
+  end
+end
+```
+
+Find the `always @(*)` block for address decoding:
+
+```systemverilog
+always @(*)
+begin
+      // Address decoding for reading registers
+      case ( axi_araddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB] )
+        3'h0   : reg_data_out <= slv_reg0;
+        3'h1   : reg_data_out <= slv_reg1;
+        3'h2   : reg_data_out <= slv_reg2;
+        3'h3   : reg_data_out <= slv_reg3;
+        3'h4   : reg_data_out <= slv_reg4;
+        default : reg_data_out <= 0;
+      endcase
+end
+```
+
+**Replace with:**
+
+```systemverilog
+always @(*)
+begin
+      // Address decoding for reading registers
+      case ( axi_araddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB] )
+        3'h0   : reg_data_out <= slv_reg0;
+        3'h1   : reg_data_out <= slv_reg1;
+        3'h2   : reg_data_out <= mergedFifoRdData;
+        default : reg_data_out <= 0;
+      endcase
+end
+
+assign mergedFifoRdEn = slv_reg_rden && (axi_araddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB] == 2);
+```
+
+At the bottom, in the "User logic" section, replace:
+
+```systemverilog
+// Add user logic here
+
+// User logic ends
+```
+
+**With:**
+
+```systemverilog
+// Add user logic here
+mergeCore mc(
+    .clock(S_AXI_ACLK),
+    .reset(!S_AXI_ARESETN),
+    .start(fsmStart),
+    .fifoWrData(S_AXI_WDATA),
+    .fifo1WrEn(fifo1_wr_en),
+    .fifo2WrEn(fifo2_wr_en),
+    .mergedFifoRdEn(mergedFifoRdEn),
+    .mergedFifoRdData(mergedFifoRdData),
+    .done(sortDone)
+);
+
+// User logic ends
+```
+
+## Summary of Changes
+
+| Register Address | Modified Function |
+|-----------------|--------------|
+| 0x00 (slv_reg0) | Start bit + auto-clears when done |
+| 0x04 (slv_reg1) | Status register (set to 1 when done) |
+| 0x08 (slv_reg2) | **READ**: Merged FIFO output |
+| 0x0C (slv_reg3) | **WRITE**: FIFO1 input (generates pulse) |
+| 0x10 (slv_reg4) | **WRITE**: FIFO2 input (generates pulse) |
+
+The transformation converts a passive register file into an active hardware controller with proper handshaking!
+
+With this, we transformed a standard AXI4 peripheral template into a hardware controller with proper logic for register control.
+
+4. Writing the merge array ip core logic
+
+Remember that we instantiated in the user logic section a module named `mergeCore`? We have the AXI4 registers to control it, but we need to develop this module's logic to make it actually be able to merge the two arrays together.
+
+We first add sources by clicking the "+" in the `Sources` section. Select "Add or create design sources" when prompted, and then select "Create File". Make it a Verilog file, with the name `mergeCore`.
+
+Click and open `mergeCore.v`. You will find under the `hw_files` folder a completed file for you. Feel free to challenge yourself and write it yourself, or modify the logic to do something else other than merging two arrays later on after completing this tutorial.
+
+Next, you will realize that you don't have the FIFOs required for the merge array logic, and you will see file icons with red question marks. To add the FIFOs, we can use Xilinx's FIFO Generator IP. Click on "IP Catalog" on the sidebar under "Project Manager", and search for "FIFO Generator".
+
+
+
+> Select "1024" instead of "2048" for write/read depth of arrayFifo1 and arrayFifo2, but leave it at "2048" for mergedFifo.
+> Pay attention to the naming - it must match the module name which you used in the `mergeCore` code.
+
+5. Generating bitstream and required files
+
+Before running `Generate Bitstream`, let's move our
+
+Click "Apply", then "OK".
+
+For tcl: gen block design
+For hwh: `merge_array/merge_array.gen/sources_1/bd/design_1/hw_handoff/design_1.hwh`
+For bit: `merge_array/merge_array.runs/impl_1/design_1_wrapper.bit`
+
+rename .bit to `design1.bit`
 
 
 
