@@ -38,7 +38,7 @@ https://github.com/Xilinx/PYNQ/blob/master/boards/Pynq-Z1/base/notebooks/audio/a
 
 ## 2.3 Audio Processing (Hardware)
 
-In this section you will get to understand how exactly the PYNQ acts as a "embedded Python wrapper" which allows you to interact with your block design's components. Here we will take more of a embedded systems approach and modify both the BaseOverlay and also learn how drivers interact with those components. The end goal is to create a hardware-based solution to accelerate the PDM-to-PCM conversion.
+In this section you will get to understand how exactly the PYNQ acts as a "embedded Python wrapper" which allows you to interact with your block design's components. Here we will take more of a embedded systems approach and modify both the BaseOverlay and also learn how drivers interact with those components. The end goal is to create a hardware-based solution for the PDM-to-PCM conversion we just completed in software.
 
 Let's start by understanding the audio module in the BaseOverlay. Click open `<expand the IP>`.
 
@@ -66,6 +66,15 @@ self._libaudio = self._ffi.dlopen(LIB_SEARCH_PATH + "/libaudio.so")
 
 which is compiled from the C++ audio drivers using CMake.
 
+For convenience, I have provided a shrunk down version of the BaseOverlay as a .tcl script. Running the script will open up a new design
+
+!!!(add instructions on how to run the script in vivado)
+
+Our final goal is of this hardware section is to create a block design that does the PDM-to-PCM conversion, by making changes on top of the BaseOverlay's audio infrastructure. This is a picture of the end goal:
+
+![](/images/end-goal.jpg)
+
+
 Now let's do the hardware programming!
 
 ### Task 2B: Creating an audio frontend (PDM-to-PCM converter)
@@ -78,6 +87,8 @@ Useful references:
 - [Moving Average and CIC Filters](https://tomverbeure.github.io/2020/09/30/Moving-Average-and-CIC-Filters.html)
 - [CIC Filters Explained (YouTube)](https://www.youtube.com/watch?v=8RbUSaZ9RGY)
 - [CIC Compiler Documentation - AMD](https://docs.amd.com/v/u/en-US/pg140-cic-compiler)
+
+At the end
 
 [Add a diagram showing we will add an audio frontend in front of the audio ip]
 

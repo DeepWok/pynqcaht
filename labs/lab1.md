@@ -214,9 +214,26 @@ When prompted with options, select "Create a new AXI4 peripheral".
 
 ![New AXI4 peripheral](/images/new_axi4_periph.jpg)
 
+Feel free to name it anything you want to, in this example we name it `merge_array` with version 1.0.
+
+![](/images/new_pkg.jpg)
+
+You will be prompted to add AXI4 interfaces to be supported by your peripheral. Not much changes are needed here, just make sure you set the number of registers to 5.
+
+![](/images/add_if.jpg)
+
+Lastly, we create the peripheral with options "Edit IP". This will prompt Vivado to open a new window where you can edit this merge array IP.
+
+![](/images/edit_ip.jpg)
+
 3. Modifying the merge array ip
 
 I'll guide you through transforming the first template into the second one step by step.
+
+Initially, we see the following:
+![](/images/edit_merge_ip.jpg)
+
+Let's first modify this `merge_array_v1_0_S00_AXI` Verilog file.
 
 After the existing signal declarations (after `reg aw_en;`), add:
 
@@ -414,27 +431,50 @@ We first add sources by clicking the "+" in the `Sources` section. Select "Add o
 
 Click and open `mergeCore.v`. You will find under the `hw_files` folder a completed file for you. Feel free to challenge yourself and write it yourself, or modify the logic to do something else other than merging two arrays later on after completing this tutorial.
 
-Next, you will realize that you don't have the FIFOs required for the merge array logic, and you will see file icons with red question marks. To add the FIFOs, we can use Xilinx's FIFO Generator IP. Click on "IP Catalog" on the sidebar under "Project Manager", and search for "FIFO Generator".
+![](/images/mergecore.jpg)
 
+Next, you will realize that you don't have the FIFOs required for the merge array logic, and you will see file icons with red question marks.
 
+![](/images/mergecore_red.jpg)
+
+To add the FIFOs, we can use Xilinx's FIFO Generator IP. Click on "IP Catalog" on the sidebar under "Project Manager", and search for "FIFO Generator".
+
+![](/images/fifo_gen.jpg)
+
+Now for the FIFO Generator configurations:
+
+Keep it as native and a common clock block RAM.
+
+The only changes required is in the "Native Ports" tab.
+
+![](/images/fifo_gen_config.jpg)
 
 > Select "1024" instead of "2048" for write/read depth of arrayFifo1 and arrayFifo2, but leave it at "2048" for mergedFifo.
-> Pay attention to the naming - it must match the module name which you used in the `mergeCore` code.
+> Pay attention to the naming - it must match the module name which you used in the `mergeCore` code. For example, the picture shows the instantiation for `mergedFifo`, but you should instantiate another FIFO Generator for `arrayFifo`, which will be used by both `arrayFifo1` and `arrayFifo2`.
+
+After completion, click on `Edit Packaged IP`. Keep a record of the Identification tab of the IP:
+
+![](/images/pkg_ip.jpg)
+
+Now return to the original `merge_array` Vivado project.
+
+In the block design, add the `merge_array_v1_0_v1_0` IP.
+
+![](/images/merge_array_bd.jpg)
+
+Run connection automation, then right click on `design_1` (with the orange square on the left) and "create HDL wrapper".
 
 5. Generating bitstream and required files
 
-Before running `Generate Bitstream`, let's move our
+Now let's run `Generate Bitstream`. After it completes, we need to obtain three files to run the hardware successfully with Jupyter Notebook, as per the previous section.
 
-Click "Apply", then "OK".
+- For `.tcl`: File > Export > Export Block Design
+- For `.hwh`: `merge_array/merge_array.gen/sources_1/bd/design_1/hw_handoff/design_1.hwh`
+- For `.bit`: `merge_array/merge_array.runs/impl_1/design_1_wrapper.bit`. Rename the file to `design1.bit`
 
-For tcl: gen block design
-For hwh: `merge_array/merge_array.gen/sources_1/bd/design_1/hw_handoff/design_1.hwh`
-For bit: `merge_array/merge_array.runs/impl_1/design_1_wrapper.bit`
+![](/images/export_bd.jpg)
 
-rename .bit to `design1.bit`
-
-
-
+Afterwards, upload them into a folder on Jupyter Notebook.
 
 ### Step 2: Create the drivers
 
@@ -499,7 +539,7 @@ The extern "C" linkage prevents C++ name mangling, making the function callable 
 
 #### Python driver layer
 
-1. How can we control these C++ functions?
+Q1: How can we control these C++ functions?
 
 Notice the use of `cffi` in Python? This stands for "C Foreign Function Interface", an [interface in Python used for calling C code](https://pypi.org/project/cffi/).
 
@@ -524,7 +564,59 @@ The MergeIP class inherits from DefaultIP, integrating with PYNQ's overlay syste
 
 - `self.buffer`: NumPy array which stores the output result, which is the merged array
 
-2. Where do the arrays `unsigned int *a` and `unsigned int *b` come from?
+Q2: Where do the arrays `unsigned int *a` and `unsigned int *b` come from?
 
--
+The arrays `unsigned int *a` and `unsigned int *b` come from **Python through the CFFI and ctypes interface**. Here's the complete data flow:
+
+When you call the `merge()` method in Python with two lists or arrays:
+
+```python
+result = merge_ip.merge([1, 3, 5], [2, 4, 6])
+```
+
+The Python driver first converts them to NumPy arrays:[1]
+
+```python
+a = numpy.array(a, dtype=numpy.uint32)  # [1, 3, 5]
+b = numpy.array(b, dtype=numpy.uint32)  # [2, 4, 6]
+```
+
+NumPy arrays store their data in contiguous memory buffers. The `ctypes.data` attribute provides the **memory address** where this data lives:
+
+```python
+a.ctypes.data  # Returns integer memory address
+b.ctypes.data  # Returns integer memory address
+```
+
+CFFI's `cast()` function converts these Python integer addresses into C-style pointers that can be passed to C/C++ functions:
+
+```python
+a_ptr = self._ffi.cast("unsigned int *", a.ctypes.data)
+b_ptr = self._ffi.cast("unsigned int *", b.ctypes.data)
+```
+
+At this point, `a_ptr` and `b_ptr` are CFFI pointer objects that point directly to the NumPy array data in memory.
+
+When you call the C++ function through CFFI:
+
+```python
+self._libmerge.merge(
+    self._base_addr,  # BaseAddr
+    c_buf,            # BufAddr
+    a_ptr,            # a → becomes unsigned int *a
+    a_size,           # a_size
+    b_ptr,            # b → becomes unsigned int *b
+    b_size            # b_size
+)
+```
+
+CFFI marshals these pointer objects into actual C++ pointer arguments. The C++ function receives `a` and `b` as `unsigned int *` pointers that **directly reference the original NumPy array memory**.
+
+This approach is **zero-copy access**: the C++ code reads directly from the same memory locations where Python stored the data. No data duplication occurs—both Python and C++ are working with the same underlying memory buffer.
+
+### Step 4: Running the Jupyter Notebook
+
+Now upload the Jupyter Notebook for this task, which has been provided under `jupyter_notebook/lab1`. Running all the code cells should result in the resulting merged array being printed.
+
+
 
