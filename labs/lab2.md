@@ -89,17 +89,28 @@ Useful references:
 - [CIC Filters Explained (YouTube)](https://www.youtube.com/watch?v=8RbUSaZ9RGY)
 - [CIC Compiler Documentation - AMD](https://docs.amd.com/v/u/en-US/pg140-cic-compiler)
 
-[Add a diagram showing we will add an audio frontend in front of the audio ip] TODO
 
 TODO: Entire 2B part
 
 ### Task 2C: Modifying the audio_direct ip to work with PCM data
 
+Now we have some frontend module which converts the incoming PDM data into PCM data, we need to modify the `audio_direct` module to be able to handle PCM data instead of PDM data.
+
+As we know, under the hood of the BaseOverlay's `audio_direct` is an AXI4 peripheral which are MMIO register-controlled.
+
 TODO: Entire 2C part
 
-### Task 2D: Connect audio frontend to BaseOverlay audio modules
+### Task 2D: Connecting up the modified modules
+
+Now let's connect up the audio frontend we created in Task 2B and the modified `audio_direct` ip we developed in Task 2C.
+
+
 
 TODO: Entire 2D part
+
+After completion of the design, we generate bitstream. This is the same as the tasks in lab 1.
+
+> Note: You can run "validate design" to do a simple check of your block design before running bitstream generation. Reference: https://docs.amd.com/r/en-US/ug995-vivado-ip-subsystems-tutorial/Step-8-Validating-the-Design
 
 ### Task 2E: Modifying the drivers
 
@@ -129,5 +140,8 @@ Upload the `lab2-hw.ipynb` notebook from `jupyter_notebook/lab2` to your PYNQ bo
 
 ## 2.4 Conclusion
 
-Congratulations for ... <TODO>
+Congratulations for completing Lab 2. You've now gained hands-on experience with both software and hardware audio processing on the PYNQ-Z1 board.
+
+This foundation in audio processing and hardware-software co-design will be essential for the upcoming sections where you'll integrate speech recognition capabilities using the Whisper API. You now have a complete audio pipeline that can capture microphone input, convert it to standard PCM format in hardware, and save it as WAV files ready for further processing.
+
 
