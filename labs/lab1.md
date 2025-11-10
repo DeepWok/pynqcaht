@@ -49,7 +49,7 @@ On top of this, the PYNQ framework provides a full Ubuntu-based Linux distributi
 | ![PYNQ Workshop Slide 9](../images/pynq-workshop-slide-9.png)  |
 | ------------------------------------------------------------ |
 | ![PYNQ Workshop Slide 10](../images/pynq-workshop-slide-10.png) |
-| ![PYNQ Workshop Slide 12](../images/pynq-workshop-slide-12.png) |(
+| ![PYNQ Workshop Slide 12](../images/pynq-workshop-slide-12.png) |
 
 > Source: https://github.com/Xilinx/PYNQ_Workshop/blob/master/01_PYNQ_Workshop_introduction.pdf
 
@@ -61,10 +61,10 @@ By default, PYNQ uses a web interface to interact with the FPGA board. We will n
 
 #### Assigning a Static IP:
 
-PYNQ by default uses a static IP address of `192.168.2.99`. You should configure your laptop to also have an IP address **on the same subnet as the PYNQ-Z1 board** (i.e. `192.168.2.x) to be able to access the Jupyter Notebook server.
+PYNQ by default uses a static IP address of `192.168.2.99`. You should configure your laptop to also have an IP address **on the same subnet as the PYNQ-Z1 board** (i.e. `192.168.2.X`) to be able to access the Jupyter Notebook server.
 
 __Windows__
-Open up the `Network and Sharing Center`, and click on the `Ethernet connection`. Click on `Properties`, and then double-click on `Internet Protocol Version 4 (TCP/IPv4)`. Assign the following IP address: `192.168.2.x` where x is any number between 0 and 255, other than 99.
+Open up the `Network and Sharing Center`, and click on the `Ethernet connection`. Click on `Properties`, and then double-click on `Internet Protocol Version 4 (TCP/IPv4)`. Assign the following IP address: `192.168.2.X` where X is any number between 0 and 255, other than 99.
 
 __Linux__
 Modify `/etc/network/interfaces` Ethernet interface:
@@ -102,7 +102,7 @@ Now we are ready to get started. Open up Vivado and create a new project.
 
 1. Open up Vivado and create a new project.
 2. Press Next after reading the wizard.
-3. Enter a suitable name and location for the project. Ensure check subdirectory is enabled so that your project files are contained in a parent folder.
+3. Enter a suitable name and location for the project (such as `lab1`). Ensure check subdirectory is enabled so that your project files are contained in a parent folder.
 4. Press Next.
 5. Select RTL Project, for now: "do not specify the sources".
 6. Press Next.
@@ -126,7 +126,7 @@ On the column on the left hand side, click `Create Block Design`. You can leave 
 
 ![Create Block Design](/images/create_block_design.png)
 
-Add the Zynq7 processing system - this contains the interfaces to the dual ARM cores on the FPGA. Inside the Zynq7 PS IP settings, there is a part which notes how many HP slave ports are needed (only one needed in this case, HP0).
+Add the Zynq7 processing system - this contains the interfaces to the dual ARM cores on the FPGA. Double click on the Zynq7 PS block. Inside the Zynq7 PS IP settings, there is a part which notes how many HP slave ports are needed (only one needed in this case, HP0).
 
 ![Add Zynq Processing System IP](/images/add_ip.png)
 
@@ -153,9 +153,7 @@ In the `Interface` tab, we specify how this block should communicate on the AXI 
 
 Press OK to end the customise IP wizard.
 
-Connect the DMA to the FIR Compiler block:
-
-We connect the `M_AXIS_DATA` from the output of the FIR compiler to the `S_AXIS_S2MM` (Slave AXI interface for Stream-to-Memory-Mapped transfers) input port of the AXI DMA Block.
+Next, we connect the `M_AXIS_DATA` from the output of the FIR compiler to the `S_AXIS_S2MM` (Slave AXI interface for Stream-to-Memory-Mapped transfers) input port of the AXI DMA Block.
 
 Then, we connect the `M_AXI_S2MM` (Master AXI interface for Stream-to-Memory-Mapped transfers) ouput port of the DMA to the `S_AXIS_DATA` input port of the FIR Compiler. This allows us to feed a memory-mapped data format used by the DMA into the streaming input of signal data that the FIR compiler expects.
 
@@ -184,12 +182,32 @@ You should have a design that looks something like this:
 
 ### Exporting the hardware
 
+Now that the design is completed, click `F6` to validate your design. If validation is successful, double click on `design1.bd` under "Design Sources" in the "Sources" window. Then select "Create HDL wrapper". Once that is completed, Go to the sidebar on the left, and run "Generate Bitstream". This should automatically run Synthesis and Implementation.
 
+![](/images/hdl_wrapper.jpg)
 
+> Synthesis translates your HDL code into a gate-level netlist of logical components (LUTs, flip-flops, DSPs, etc.) that can be implemented on the FPGA fabric. Implementation then places those components onto physical FPGA resources and routes the connections between them, while bitstream generation creates the binary configuration file that programs the FPGA.
+
+Now to run your design on the PYNQ board, we need three files: a `tcl` file, a `hwh` files, and a `bit` file.
+
+To obtain the three files:
+- For `.tcl`: File > Export > Export Block Design
+- For `.hwh`: `lab1/lab1.gen/sources_1/bd/design_1/hw_handoff/design_1.hwh`
+- For `.bit`: `lab1/lab1.runs/impl_1/design_1_wrapper.bit`. Rename the file to `design1.bit`
+
+Replace "lab1" with whatever you named your project.
 
 ### Loading the overlay on Jupyter Notebook
 
-???
+Once you have obtained the files, connect your laptop to the PYNQ board.
+
+On your laptop browser, type in: `192.168.2.99`. When prompted with a password, enter "xilinx".
+
+Create a new folder and upload your three files onto it, along with the provided Jupyter Notebook `jupyter_notebook/fir`.
+
+![](/images/jupyter.jpg)
+
+Click open the Jupyter Notebook. Run the cells and follow the instructions on the notebook, and observe the speed of the hardware IP for FIR filters compared to the software functions.
 
 ## 1.3 Simple register control (merge array)
 
@@ -621,6 +639,3 @@ This approach is **zero-copy access**: the C++ code reads directly from the same
 ### Step 4: Running the Jupyter Notebook
 
 Now upload the Jupyter Notebook for this task, which has been provided under `jupyter_notebook/lab1`. Running all the code cells should result in the resulting merged array being printed.
-
-
-
