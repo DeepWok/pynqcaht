@@ -165,20 +165,27 @@ Now that we convert the PDM input from the microphone to PCM, we need to modify 
 
 ![](/images/audio_direct_new.jpg)
 
-Here's the new `audio_direct_v1_1` hierarchy we want to end up with. Here, we replace the old vhdl AXI4 peripheral file (XX_S_AXI_inst) with a newer Verilog version. I have also modified the underlying files to Verilog counterparts. Compare the new hierarchy to the old hierarchy - do you notice any removed files? Can you explain why we have changed some files, why not the rest?
+Here's the new `audio_direct_v1_1` hierarchy we want to end up with. Here, we replace the old vhdl AXI4 peripheral file (XX_S_AXI_inst) with a newer Verilog version. I have also modified the underlying files to Verilog counterparts. Compare the new hierarchy to the old hierarchy - do you notice any removed files? Think about which files you will need to modify, and which ones you won't need to.
 
 Based on your experience so far in lab 1 and lab 2, you should be able to modify the old BaseOverlay `audio_direct` hierarchy into the new hierarchy which supports PCM, so here I will provide less instructions.
 
-> As a hint, start from the design source files within the `audio_direct_v1_1` ip at the start of this section which you saw when you explored the BaseOverlay.
-
+> As a hint, start from the design source files within the `audio_direct_v1_1` ip at the start of this section which you saw when you explored the BaseOverlay. The required files that you need to modify are provided in this repository under `hw_files`. Once you have finished, package the IP.
 
 ### Task 2D: Connecting up the modified modules
 
 Now let's connect up the audio frontend we created in Task 2B and the modified `audio_direct` ip we developed in Task 2C.
 
-TODO: Entire 2D part
+Starting from the `lab2-skeleton`, we first add the two IPs built in Task 2C and 2D.
 
-After completion of the design, we generate bitstream. This is the same as the tasks in lab 1.
+Firstly, make sure that this skeleton Vivado project can actually find the IPs you packaged. To do so, on the sidebar (Project Manager) click "Settings". Then in the pop-up, navigate to "IP > Repository". Add the path to where you saved your IP projects. If you saved all your Vivado projects under the same directory (e.g. `vivado_ws`), that makes it easier - just add the uppermost directory as one of the paths, and Vivado will auto-detect all the IPs within the directory.
+
+![](/images/add_ip_path.jpg)
+
+Next, you should be able to add the IPs to the block design. Connect up the IPs like this:
+
+![](/images/design.jpg)
+
+After completion of the design, we generate bitstream. Obtain the required `tcl`, `hwh` and `bit` files - repeating the steps you previously did in lab 1.
 
 > Note: You can run "validate design" to do a simple check of your block design before running bitstream generation. Reference: https://docs.amd.com/r/en-US/ug995-vivado-ip-subsystems-tutorial/Step-8-Validating-the-Design
 
@@ -215,5 +222,3 @@ Upload the `lab2-hw.ipynb` notebook from `jupyter_notebook/lab2` to your PYNQ bo
 Congratulations for completing Lab 2. You've now gained hands-on experience with both software and hardware audio processing on the PYNQ-Z1 board.
 
 This foundation in audio processing and hardware-software co-design will be essential for the upcoming sections where you'll integrate speech recognition capabilities using the Whisper API. You now have a complete audio pipeline that can capture microphone input, convert it to standard PCM format in hardware, and save it as WAV files ready for further processing.
-
-
