@@ -6,16 +6,20 @@
 
 To get started with the labs, we will first setup the required toolchain - this might be a bit troublesome, so please take advantage of the debugging notes `debug.md`.
 
-In this lab, we will use the PYNQ-Z1 board, with PYNQ image v3.1, and Vivado version 2024.2.
+In this lab, we will use the PYNQ-Z1 board. The lab was built on Windows 10, using PYNQ release version v2.7 and Xilinx Tool Version 2020.2. Feel free to use a more recent release version, but avoid using any release version before PYNQ v2.7.
 
-> Tested Vivado versions:
-> - 2020.2
+Note: Vivado's projects and tcl scripts are forward compatible, but not backwards compatible.
+
+![](/images/versions.png)
+
+> Source: https://pynq.readthedocs.io/en/latest/pynq_sd_card.html
+
+The latest available version is v3.1, which corresponds to Xilinx 2024.1.
 
 If you encounter any issues, please first refer to the debugging notes `debug.md`, before approaching the TAs or the module leader.
 
 Operating system requirements: Windows 10 or 11, Linux (Ubuntu)
 
-- This lab was created, tested and verified on a Windows 10 laptop running the above versions of the toolchains.
 - If you are using a MacOS device, options include:
   - Virtual machine (VM)
   - Using lab computers
@@ -37,15 +41,17 @@ Once you have flashed the PYNQ image onto your SD card, insert it into the PYNQ-
 Let us now look into how the board works. The most important component is the Zynq-7000 System-On-Chip (SoC), which contains the Processing System (PS) made up of an ARM-Cortex A9 core, as well as the Programmable Logic (PL) which can be configured with custom hardware designs that we will soon create in Vivado. The block diagram for the Zynq-7000 SoC is shown below:
 
 ![Zynq-7000 SoC Block Diagram](../images/Zynq-7000SBlockDiagram.jpg)
-(Source: https://www.mouser.co.uk/new/xilinx/xilinx-zynq-7000-socs/)
+
+> Source: https://www.mouser.co.uk/new/xilinx/xilinx-zynq-7000-socs/
 
 On top of this, the PYNQ framework provides a full Ubuntu-based Linux distribution on the SD card, with Linux drivers for the interfaces between the PS and PL, wrapped in Python libraries which makes the design easier. The following excerpt from Xilinx's introduction to PYNQ gives an excellent visual representation of the overall systems you will be working with:
 
 | ![PYNQ Workshop Slide 9](../images/pynq-workshop-slide-9.png)  |
 | ------------------------------------------------------------ |
 | ![PYNQ Workshop Slide 10](../images/pynq-workshop-slide-10.png) |
-| ![PYNQ Workshop Slide 12](../images/pynq-workshop-slide-12.png) |
-(Source: https://github.com/Xilinx/PYNQ_Workshop/blob/master/01_PYNQ_Workshop_introduction.pdf)
+| ![PYNQ Workshop Slide 12](../images/pynq-workshop-slide-12.png) |(
+
+> Source: https://github.com/Xilinx/PYNQ_Workshop/blob/master/01_PYNQ_Workshop_introduction.pdf
 
 ### Step 4: Connecting to Jupyter Notebook
 
@@ -68,7 +74,7 @@ iface eth0 inet static
    netmask 255.255.255.0
 ```
 
-See the PYNQ documentation: https://pynq.readthedocs.io/en/latest/appendix/assign_a_static_ip.html#assign-a-static-ip-address
+> See the PYNQ documentation: https://pynq.readthedocs.io/en/latest/appendix/assign_a_static_ip.html#assign-a-static-ip-address
 
 #### Open Notebook in browser
 
