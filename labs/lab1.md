@@ -67,28 +67,21 @@ __Windows__
 Open up the `Network and Sharing Center`, and click on the `Ethernet connection`. Click on `Properties`, and then double-click on `Internet Protocol Version 4 (TCP/IPv4)`. Assign the following IP address: `192.168.2.X` where X is any number between 0 and 255, other than 99.
 
 __Linux__
-Modify `/etc/network/interfaces` Ethernet interface:
-```
-iface eth0 inet static
-   address 192.168.2.1
-   netmask 255.255.255.0
-```
-
-> See the PYNQ documentation: https://pynq.readthedocs.io/en/latest/appendix/assign_a_static_ip.html#assign-a-static-ip-address
+See the PYNQ documentation: https://pynq.readthedocs.io/en/latest/appendix/assign_a_static_ip.html#assign-a-static-ip-address
 
 #### Open Notebook in browser
 
 Now, open up your web browser and type in the following address: `192.168.2.99:9090`, which is PYNQ's default IP address. The default password is `xilinx`
 
-> Is your PYNQ board refusing to connect? Refer to the troubleshooting section in [debug.md](../debug.md/#refusing-to-connect). Troubleshooting might require the use of PuTTY.
+> Is your PYNQ board refusing to connect? Refer to the troubleshooting section in [debug.md](../debug.md/#refusing-to-connect). Troubleshooting might require the use of a SSH/Serial terminal.
 
-### PuTTY (optional)
+### Getting a terminal (optional)
 
-You may have encountered PuTTY before in your work or previous modules - it is a terminal emulator that allows you to connect to a remote server. In this case, we will use PuTTY to SSH into the PYNQ board.
+You may have encountered terminals in various forms before in your work or previous modules. They can be very useful for controlling devices that are remote, low-powered, and/or have little I/O hardware of their own.
 
-Note that this is not strictly necessary, as you should be able to use the Juputer Notebook interface to directly interact with your PYNQ board. However, PuTTY is useful for troubleshooting in cases where your board refuses to establish a connection.
+The section on getting a terminal in [debug.md](../debug.md/#getting-a-terminal) explains how to get a terminal, either via SSH or a Serial console.
 
-Download PuTTY from the following link: https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html
+Note that this is not strictly necessary, as you should be able to use the Juputer Notebook interface to directly interact with your PYNQ board. However, having a terminal is useful for troubleshooting in cases where your board refuses to establish a connection.
 
 ## 1.2 FIR filter
 
