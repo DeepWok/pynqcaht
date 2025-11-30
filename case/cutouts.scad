@@ -32,8 +32,8 @@ module microusb() {
 }
 
 module audio() {
-	translate([0, 1.2, 0])
-	_circle(1.75);
+	translate([0, 0.5, 0])
+	_circle(2.5);
 }
 
 module dc() {
