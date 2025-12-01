@@ -1,8 +1,10 @@
 # Lab 4: Building the chatbot
 
-## 4.1 Setting up board connection
+## 4.1 Setting up an internet connection
 
-https://github.com/Xilinx/PYNQ/blob/master/pynq/notebooks/common/wifi.ipynb
+PYNQ has a nice and easy Python API for getting it to connect to ordinary (WPA2-PSK) WiFi, but it won't work for WPA2-Enterprise networks like eduroam. Fortunately for you, this module is not about reverse engineering various WiFi details that Imperial could have just put on their ICT website, so that has been done for you already.
+
+Load [wifi.py](/wifi.py) onto the PYNQ board and run it, e.g. by clicking "Import" from the Jupyter Notebook web interface to load it, and then opening a new notebook to type `%run wifi.py`. Follow the instructions and be sure to read the security warning.
 
 ## 4.2 Using Whisper
 
